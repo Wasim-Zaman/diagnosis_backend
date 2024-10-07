@@ -20,12 +20,10 @@
 
 /**
  * @swagger
- * /api/user/v1/register:
+ * /v1/register:
  *   post:
  *     summary: Register a new user
  *     tags: [User]
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -33,30 +31,36 @@
  *           schema:
  *             type: object
  *             required:
- *               - username
+ *               - fullName
+ *               - mobileNumber
+ *               - email
  *               - password
+ *               - age
+ *               - gender
+ *               - termsAccepted
  *             properties:
- *               username:
- *                 type: string
- *                 description: The user's username
- *               password:
- *                 type: string
- *                 description: The user's password
  *               fullName:
  *                 type: string
- *                 description: The user's full name
- *               fatherName:
+ *               mobileNumber:
  *                 type: string
- *                 description: The user's father's name
- *               gender:
+ *                 pattern: '^[0-9]{10}$'
+ *               email:
  *                 type: string
- *                 description: The user's gender
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 minLength: 6
  *               age:
  *                 type: integer
- *                 description: The user's age
- *               panchayatId:
+ *                 minimum: 18
+ *               gender:
  *                 type: string
- *                 description: The ID of the Panchayat the user belongs to
+ *                 enum: [MALE, FEMALE, OTHER]
+ *               image:
+ *                 type: string
+ *               termsAccepted:
+ *                 type: boolean
+ *                 enum: [true]
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -65,6 +69,9 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 201
  *                 success:
  *                   type: boolean
  *                   example: true
@@ -79,18 +86,17 @@
  *                       properties:
  *                         id:
  *                           type: string
- *                           example: "12345"
- *                         username:
+ *                         email:
  *                           type: string
- *                           example: test_user
+ *                         fullName:
+ *                           type: string
  *                     token:
  *                       type: string
- *                       example: JWT_token_here
  */
 
 /**
  * @swagger
- * /api/user/v1/login:
+ * /v1/login:
  *   post:
  *     summary: Login a user
  *     tags: [User]
@@ -101,15 +107,14 @@
  *           schema:
  *             type: object
  *             required:
- *               - username
+ *               - email
  *               - password
  *             properties:
- *               username:
+ *               email:
  *                 type: string
- *                 description: The user's username
+ *                 format: email
  *               password:
  *                 type: string
- *                 description: The user's password
  *     responses:
  *       200:
  *         description: Login successful
@@ -118,6 +123,9 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
  *                 success:
  *                   type: boolean
  *                   example: true
@@ -132,104 +140,28 @@
  *                       properties:
  *                         id:
  *                           type: string
- *                           example: "12345"
- *                         username:
+ *                         email:
  *                           type: string
- *                           example: test_user
+ *                         fullName:
+ *                           type: string
  *                     token:
  *                       type: string
- *                       example: JWT_token_here
  */
 
 /**
  * @swagger
- * /api/user/v1/getUser:
+ * /v1/user/{id}:
  *   get:
- *     summary: Get the authenticated user's profile
- *     tags: [User]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: User profile retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: User found successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "12345"
- *                     username:
- *                       type: string
- *                       example: "john_doe"
- *                     fullName:
- *                       type: string
- *                       example: "John Doe"
- *                     fatherName:
- *                       type: string
- *                       example: "Richard Doe"
- *                     gender:
- *                       type: string
- *                       example: "Male"
- *                     age:
- *                       type: integer
- *                       example: 30
- *                     panchayatId:
- *                       type: string
- *                       example: "67890"
- *       404:
- *         description: User not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: User not found
- *       401:
- *         description: Unauthorized access
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Unauthorized access
- */
-
-/**
- * @swagger
- * /api/user/v1/getUser/{id}:
- *   get:
- *     summary: Get a user by ID
+ *     summary: Get user by ID
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
- *         description: The user ID
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
  *         description: User found successfully
@@ -238,6 +170,9 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
  *                 success:
  *                   type: boolean
  *                   example: true
@@ -245,52 +180,24 @@
  *                   type: string
  *                   example: User found successfully
  *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "12345"
- *                     username:
- *                       type: string
- *                       example: test_user
- */
-
-/**
- * @swagger
- * /api/user/v1/updateUser/{id}:
+ *                   $ref: '#/components/schemas/User'
  *   put:
- *     summary: Update a user by ID
+ *     summary: Update user by ID
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
- *         description: The user ID
+ *         schema:
+ *           type: integer
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               username:
- *                 type: string
- *               password:
- *                 type: string
- *               fullName:
- *                 type: string
- *               fatherName:
- *                 type: string
- *               gender:
- *                 type: string
- *               age:
- *                 type: integer
- *               panchayatId:
- *                 type: string
+ *             $ref: '#/components/schemas/UserUpdate'
  *     responses:
  *       200:
  *         description: User updated successfully
@@ -299,6 +206,9 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
  *                 success:
  *                   type: boolean
  *                   example: true
@@ -306,31 +216,18 @@
  *                   type: string
  *                   example: User updated successfully
  *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "12345"
- *                     username:
- *                       type: string
- *                       example: updated_username
- */
-
-/**
- * @swagger
- * /api/user/v1/deleteUser/{id}:
+ *                   $ref: '#/components/schemas/User'
  *   delete:
- *     summary: Delete a user by ID
+ *     summary: Delete user by ID
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
- *         description: The user ID
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
  *         description: User deleted successfully
@@ -339,6 +236,9 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
  *                 success:
  *                   type: boolean
  *                   example: true
@@ -349,7 +249,36 @@
 
 /**
  * @swagger
- * /api/user/v1/getUsers:
+ * /v1/user:
+ *   get:
+ *     summary: Get current user
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User found successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: User found successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ */
+
+/**
+ * @swagger
+ * /v1/users:
  *   get:
  *     summary: Get all users with pagination
  *     tags: [User]
@@ -370,7 +299,7 @@
  *         name: query
  *         schema:
  *           type: string
- *         description: Search query for username or other fields
+ *         description: Search query for fullName or email
  *     responses:
  *       200:
  *         description: Users retrieved successfully
@@ -379,6 +308,9 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
  *                 success:
  *                   type: boolean
  *                   example: true
@@ -386,14 +318,99 @@
  *                   type: string
  *                   example: Users retrieved successfully
  *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                         example: "12345"
- *                       username:
- *                         type: string
- *                         example: test_user
+ *                   type: object
+ *                   properties:
+ *                     data:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/User'
+ *                     totalPages:
+ *                       type: integer
+ *                     currentPage:
+ *                       type: integer
+ *                     totalUsers:
+ *                       type: integer
+ */
+
+/**
+ * @swagger
+ * /v1/reset-password:
+ *   post:
+ *     summary: Reset user password
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - newPassword
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 6
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Password reset successfully
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         fullName:
+ *           type: string
+ *         mobileNumber:
+ *           type: string
+ *         email:
+ *           type: string
+ *         age:
+ *           type: integer
+ *         gender:
+ *           type: string
+ *         image:
+ *           type: string
+ *     UserUpdate:
+ *       type: object
+ *       properties:
+ *         fullName:
+ *           type: string
+ *         mobileNumber:
+ *           type: string
+ *           pattern: '^[0-9]{10}$'
+ *         email:
+ *           type: string
+ *           format: email
+ *         age:
+ *           type: integer
+ *           minimum: 18
+ *         gender:
+ *           type: string
+ *           enum: [MALE, FEMALE, OTHER]
+ *         image:
+ *           type: string
  */
