@@ -1,23 +1,53 @@
+const Joi = require('joi');
+
 const User = require('../models/user');
-const Panchayat = require('../models/panchayat');
 const CustomError = require('../utils/error');
 const response = require('../utils/response');
 const JWT = require('../utils/jwt');
 const Bcrypt = require('../utils/bcrypt');
 
+// Joi validation schemas
+const registerSchema = Joi.object({
+  fullName: Joi.string().required(),
+  mobileNumber: Joi.string()
+    .pattern(/^[0-9]{10}$/)
+    .required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+  age: Joi.number().integer().min(18).required(),
+  gender: Joi.string().valid('MALE', 'FEMALE', 'OTHER').required(),
+  image: Joi.string().optional(),
+  termsAccepted: Joi.boolean().valid(true).required(),
+});
+
+const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});
+
+const updateUserSchema = Joi.object({
+  fullName: Joi.string(),
+  mobileNumber: Joi.string().pattern(/^[0-9]{10}$/),
+  email: Joi.string().email(),
+  age: Joi.number().integer().min(18),
+  gender: Joi.string().valid('MALE', 'FEMALE', 'OTHER'),
+  image: Joi.string(),
+}).min(1);
+
 // Register a new user
 exports.register = async (req, res, next) => {
   try {
-    const { username, password, fullName, fatherName, gender, age, panchayatId } = req.body;
-
-    if (!username || !password) {
-      throw new CustomError('Username and password are required', 400);
+    const { error, value } = registerSchema.validate(req.body);
+    if (error) {
+      throw new CustomError(error.details[0].message, 400);
     }
 
+    const { fullName, mobileNumber, email, password, age, gender, image } = value;
+
     // Check if user already exists
-    const existingUser = await User.findByUsername(username);
+    const existingUser = await User.findUnique({ where: { email } });
     if (existingUser) {
-      throw new CustomError('Username is already taken', 400);
+      throw new CustomError('Email is already registered', 400);
     }
 
     // Hash the password
@@ -25,23 +55,17 @@ exports.register = async (req, res, next) => {
 
     // Create the new user
     const newUser = await User.create({
-      username,
-      password: hashedPassword,
-      fullName,
-      fatherName,
-      gender,
-      age,
-      panchayatId,
+      data: {
+        fullName,
+        mobileNumber,
+        email,
+        password: hashedPassword,
+        age,
+        gender,
+        image,
+        termsAccepted: true,
+      },
     });
-
-    // Add the user to the Panchayat if panchayatId is provided
-    if (panchayatId) {
-      await Panchayat.updateById(panchayatId, {
-        users: {
-          connect: { id: newUser.id }, // Connect the newly created user to the Panchayat
-        },
-      });
-    }
 
     // Create a JWT token for the newly registered user
     const token = JWT.createToken(newUser);
@@ -50,7 +74,8 @@ exports.register = async (req, res, next) => {
       response(201, true, 'User registered successfully', {
         user: {
           id: newUser.id,
-          username: newUser.username,
+          email: newUser.email,
+          fullName: newUser.fullName,
         },
         token,
       })
@@ -64,16 +89,17 @@ exports.register = async (req, res, next) => {
 // Login a user
 exports.login = async (req, res, next) => {
   try {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-      throw new CustomError('Username and password are required', 400);
+    const { error, value } = loginSchema.validate(req.body);
+    if (error) {
+      throw new CustomError(error.details[0].message, 400);
     }
 
-    // Find user by username
-    const user = await User.findByUsername(username);
+    const { email, password } = value;
+
+    // Find user by email
+    const user = await User.findUnique({ where: { email } });
     if (!user) {
-      throw new CustomError('No user found with the entered username', 401);
+      throw new CustomError('No user found with the entered email', 401);
     }
 
     // Compare provided password with stored hashed password
@@ -89,8 +115,8 @@ exports.login = async (req, res, next) => {
       response(200, true, 'Login successful', {
         user: {
           id: user.id,
-          username: user.username,
-          panchayatId: user.panchayatId,
+          email: user.email,
+          fullName: user.fullName,
         },
         token,
       })
@@ -106,7 +132,7 @@ exports.getUserById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const user = await User.findById(id);
+    const user = await User.findUnique({ where: { id: parseInt(id) } });
     if (!user) {
       throw new CustomError('User not found', 404);
     }
@@ -133,34 +159,17 @@ exports.getUser = async (req, res, next) => {
 
 // Update a user by ID
 exports.updateUserById = async (req, res, next) => {
-  const { id } = req.params;
-  const { username, password, fullName, fatherName, gender, age, panchayatId } = req.body;
-
   try {
-    // Create an update object and only add the fields that are provided in the request body
-    const updateData = {};
-
-    if (username) updateData.username = username;
-    if (password) updateData.password = password; // Consider hashing the password before updating
-    if (fullName) updateData.fullName = fullName;
-    if (fatherName) updateData.fatherName = fatherName;
-    if (gender) updateData.gender = gender;
-    if (age) updateData.age = age;
-
-    // Handle the relation update for panchayat
-    if (panchayatId) {
-      updateData.panchayat = {
-        connect: { id: panchayatId },
-      };
+    const { id } = req.params;
+    const { error, value } = updateUserSchema.validate(req.body);
+    if (error) {
+      throw new CustomError(error.details[0].message, 400);
     }
 
-    // If no fields are provided, return an error
-    if (Object.keys(updateData).length === 0) {
-      throw new CustomError('No fields provided for update', 400);
-    }
-
-    // Update the user in the database
-    const updatedUser = await User.updateById(id, updateData);
+    const updatedUser = await User.update({
+      where: { id: parseInt(id) },
+      data: value,
+    });
 
     res.status(200).json(response(200, true, 'User updated successfully', updatedUser));
   } catch (error) {
