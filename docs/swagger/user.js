@@ -191,9 +191,27 @@
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/UserUpdate'
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *               mobileNumber:
+ *                 type: string
+ *                 pattern: '^[0-9]{10}$'
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               age:
+ *                 type: integer
+ *                 minimum: 18
+ *               gender:
+ *                 type: string
+ *                 enum: [MALE, FEMALE, OTHER]
+ *               image:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       200:
  *         description: User updated successfully
@@ -213,6 +231,14 @@
  *                   example: User updated successfully
  *                 data:
  *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
  *   delete:
  *     summary: Delete user by ID
  *     tags: [User]
@@ -416,4 +442,5 @@
  *           enum: [MALE, FEMALE, OTHER]
  *         image:
  *           type: string
+ *           format: binary
  */
