@@ -28,11 +28,7 @@ const swaggerDefinition = {
 var options = {
   swaggerDefinition: swaggerDefinition,
   apis: [
-    path.join(__dirname, '../docs/swagger/admin.js'),
     path.join(__dirname, '../docs/swagger/user.js'),
-    path.join(__dirname, '../docs/swagger/panchayat.js'),
-    path.join(__dirname, '../docs/swagger/mandal.js'),
-    path.join(__dirname, '../docs/swagger/panchayatiProfile.js'),
     // add more paths...
   ],
 };
