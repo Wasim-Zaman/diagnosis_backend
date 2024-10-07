@@ -37,7 +37,6 @@
  *               - password
  *               - age
  *               - gender
- *               - termsAccepted
  *             properties:
  *               fullName:
  *                 type: string
@@ -58,9 +57,6 @@
  *                 enum: [MALE, FEMALE, OTHER]
  *               image:
  *                 type: string
- *               termsAccepted:
- *                 type: boolean
- *                 enum: [true]
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -85,7 +81,7 @@
  *                       type: object
  *                       properties:
  *                         id:
- *                           type: string
+ *                           type: integer
  *                         email:
  *                           type: string
  *                         fullName:
@@ -392,8 +388,15 @@
  *           type: integer
  *         gender:
  *           type: string
+ *           enum: [MALE, FEMALE, OTHER]
  *         image:
  *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
  *     UserUpdate:
  *       type: object
  *       properties:

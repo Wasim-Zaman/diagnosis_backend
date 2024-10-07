@@ -20,7 +20,6 @@ const registerSchema = Joi.object({
   age: Joi.number().integer().min(18).required(),
   gender: Joi.string().valid('MALE', 'FEMALE', 'OTHER').required(),
   image: Joi.string().optional(),
-  termsAccepted: Joi.boolean().valid(true).required(),
 });
 
 const loginSchema = Joi.object({
@@ -72,7 +71,6 @@ exports.register = async (req, res, next) => {
         age,
         gender,
         image,
-        termsAccepted: true,
       },
     });
 
@@ -141,7 +139,7 @@ exports.getUserById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const user = await prisma.user.findUnique({ where: { id: parseInt(id) } });
+    const user = await prisma.user.findUnique({ where: { id: id } });
     if (!user) {
       throw new CustomError('User not found', 404);
     }
@@ -175,8 +173,12 @@ exports.updateUserById = async (req, res, next) => {
       throw new CustomError(error.details[0].message, 400);
     }
 
+    if (req.file) {
+      value.image = req.file.path;
+    }
+
     const updatedUser = await prisma.user.update({
-      where: { id: parseInt(id) },
+      where: { id: id },
       data: value,
     });
 
@@ -193,7 +195,7 @@ exports.deleteUserById = async (req, res, next) => {
 
   try {
     const deletedUser = await prisma.user.delete({
-      where: { id: parseInt(id) },
+      where: { id: id },
     });
 
     if (!deletedUser) {
@@ -220,10 +222,7 @@ exports.getUsers = async (req, res, next) => {
 
     const users = await prisma.user.findMany({
       where: {
-        OR: [
-          { fullName: { contains: query, mode: 'insensitive' } },
-          { email: { contains: query, mode: 'insensitive' } },
-        ],
+        OR: [{ fullName: { contains: query } }, { email: { contains: query } }],
       },
       skip,
       take: Number(limit),
@@ -231,10 +230,7 @@ exports.getUsers = async (req, res, next) => {
 
     const totalUsers = await prisma.user.count({
       where: {
-        OR: [
-          { fullName: { contains: query, mode: 'insensitive' } },
-          { email: { contains: query, mode: 'insensitive' } },
-        ],
+        OR: [{ fullName: { contains: query } }, { email: { contains: query } }],
       },
     });
 
