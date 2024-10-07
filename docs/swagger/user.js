@@ -20,7 +20,7 @@
 
 /**
  * @swagger
- * /v1/register:
+ * /api/user/v1/register:
  *   post:
  *     summary: Register a new user
  *     tags: [User]
@@ -96,7 +96,7 @@
 
 /**
  * @swagger
- * /v1/login:
+ * /api/user/v1/login:
  *   post:
  *     summary: Login a user
  *     tags: [User]
@@ -150,7 +150,7 @@
 
 /**
  * @swagger
- * /v1/user/{id}:
+ * /api/user/v1/user/{id}:
  *   get:
  *     summary: Get user by ID
  *     tags: [User]
@@ -249,7 +249,7 @@
 
 /**
  * @swagger
- * /v1/user:
+ * /api/user/v1/user:
  *   get:
  *     summary: Get current user
  *     tags: [User]
@@ -278,7 +278,7 @@
 
 /**
  * @swagger
- * /v1/users:
+ * /api/user/v1/users:
  *   get:
  *     summary: Get all users with pagination
  *     tags: [User]
@@ -334,7 +334,7 @@
 
 /**
  * @swagger
- * /v1/reset-password:
+ * /api/user/v1/reset-password:
  *   post:
  *     summary: Reset user password
  *     tags: [User]
