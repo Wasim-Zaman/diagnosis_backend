@@ -1,18 +1,16 @@
 const express = require('express');
-
+const router = express.Router();
 const userController = require('../controllers/user');
 const isAuth = require('../middleware/isAuth');
-const isAdmin = require('../middleware/isAdmin');
 
-const router = express.Router();
-
-// Version 1 routes
-router.post('/v1/register', isAdmin, userController.register);
+// User routes
+router.post('/v1/register', userController.register);
 router.post('/v1/login', userController.login);
-router.get('/v1/getUser', isAuth, userController.getUser);
-router.get('/v1/getUser/:id', userController.getUserById);
-router.put('/v1/updateUser/:id', isAdmin, userController.updateUserById);
-router.delete('/v1/deleteUser/:id', isAdmin, userController.deleteUserById);
-router.get('/v1/getUsers', userController.getUsers);
+router.get('/v1/user/:id', isAuth, userController.getUserById);
+router.get('/v1/user', isAuth, userController.getUser);
+router.put('/v1/user/:id', isAuth, userController.updateUserById);
+router.delete('/v1/user/:id', isAuth, userController.deleteUserById);
+router.get('/v1/users', isAuth, userController.getUsers);
+router.post('/v1/reset-password', userController.resetPassword);
 
 module.exports = router;

@@ -1,6 +1,9 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const crypto = require('crypto');
+
 const Joi = require('joi');
 
-const User = require('../models/user');
 const CustomError = require('../utils/error');
 const response = require('../utils/response');
 const JWT = require('../utils/jwt');
@@ -34,6 +37,12 @@ const updateUserSchema = Joi.object({
   image: Joi.string(),
 }).min(1);
 
+// New reset password schema
+const resetPasswordSchema = Joi.object({
+  email: Joi.string().email().required(),
+  newPassword: Joi.string().min(6).required(),
+});
+
 // Register a new user
 exports.register = async (req, res, next) => {
   try {
@@ -45,7 +54,7 @@ exports.register = async (req, res, next) => {
     const { fullName, mobileNumber, email, password, age, gender, image } = value;
 
     // Check if user already exists
-    const existingUser = await User.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new CustomError('Email is already registered', 400);
     }
@@ -54,7 +63,7 @@ exports.register = async (req, res, next) => {
     const hashedPassword = await Bcrypt.createPassword(password);
 
     // Create the new user
-    const newUser = await User.create({
+    const newUser = await prisma.user.create({
       data: {
         fullName,
         mobileNumber,
@@ -97,7 +106,7 @@ exports.login = async (req, res, next) => {
     const { email, password } = value;
 
     // Find user by email
-    const user = await User.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       throw new CustomError('No user found with the entered email', 401);
     }
@@ -132,7 +141,7 @@ exports.getUserById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const user = await User.findUnique({ where: { id: parseInt(id) } });
+    const user = await prisma.user.findUnique({ where: { id: parseInt(id) } });
     if (!user) {
       throw new CustomError('User not found', 404);
     }
@@ -146,13 +155,13 @@ exports.getUserById = async (req, res, next) => {
 // Get User
 exports.getUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
     if (!user) {
       throw new CustomError('User not found', 404);
     }
     res.status(200).json(response(200, true, 'User found successfully', user));
   } catch (error) {
-    console.log(`Error in getUserById: ${error.message}`);
+    console.log(`Error in getUser: ${error.message}`);
     next(error);
   }
 };
@@ -166,7 +175,7 @@ exports.updateUserById = async (req, res, next) => {
       throw new CustomError(error.details[0].message, 400);
     }
 
-    const updatedUser = await User.update({
+    const updatedUser = await prisma.user.update({
       where: { id: parseInt(id) },
       data: value,
     });
@@ -183,20 +192,23 @@ exports.deleteUserById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    // Check if the user exists before deleting it
-    const user = await User.findById(id);
-    if (!user) {
+    const deletedUser = await prisma.user.delete({
+      where: { id: parseInt(id) },
+    });
+
+    if (!deletedUser) {
       throw new CustomError('User not found', 404);
     }
 
-    // Delete the user from the database
-    // Note: This will also delete any related documents (e.g., panchayats) in other collections
-    await User.deleteById(id);
-
     res.status(200).json(response(200, true, 'User deleted successfully'));
   } catch (error) {
-    console.log(`Error in deleteUserById: ${error.message}`);
-    next(error);
+    if (error.code === 'P2025') {
+      // Prisma error code for record not found
+      next(new CustomError('User not found', 404));
+    } else {
+      console.log(`Error in deleteUserById: ${error.message}`);
+      next(error);
+    }
   }
 };
 
@@ -204,16 +216,73 @@ exports.deleteUserById = async (req, res, next) => {
 exports.getUsers = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, query = '' } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
 
-    const users = await User.get(Number(page), Number(limit), query);
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { fullName: { contains: query, mode: 'insensitive' } },
+          { email: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      skip,
+      take: Number(limit),
+    });
 
-    if (!users.data.length) {
+    const totalUsers = await prisma.user.count({
+      where: {
+        OR: [
+          { fullName: { contains: query, mode: 'insensitive' } },
+          { email: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+    });
+
+    if (!users.length) {
       throw new CustomError('No users found', 404);
     }
 
-    res.status(200).json(response(200, true, 'Users retrieved successfully', users));
+    res.status(200).json(
+      response(200, true, 'Users retrieved successfully', {
+        data: users,
+        totalPages: Math.ceil(totalUsers / Number(limit)),
+        currentPage: Number(page),
+        totalUsers,
+      })
+    );
   } catch (error) {
     console.log(`Error in getUsers: ${error.message}`);
+    next(error);
+  }
+};
+
+// Reset password
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { error, value } = resetPasswordSchema.validate(req.body);
+    if (error) {
+      throw new CustomError(error.details[0].message, 400);
+    }
+
+    const { email, newPassword } = value;
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new CustomError('No user found with the entered email', 404);
+    }
+
+    const hashedPassword = await Bcrypt.createPassword(newPassword);
+
+    const updatedUser = await prisma.user.update({
+      where: { email },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    res.status(200).json(response(200, true, 'Password reset successfully'));
+  } catch (error) {
+    console.log(`Error in resetPassword: ${error.message}`);
     next(error);
   }
 };

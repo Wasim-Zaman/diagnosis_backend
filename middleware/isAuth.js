@@ -1,15 +1,15 @@
 const jwt = require('jsonwebtoken');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 require('dotenv').config();
 
-const MyError = require('../utils/error');
+const CustomError = require('../utils/error');
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   const authHeader = req.get('Authorization');
 
   if (!authHeader) {
-    const error = new MyError('You are not authenticated.');
-    error.statusCode = 401;
-    throw error;
+    throw new CustomError('You are not authenticated.', 401);
   }
 
   const token = authHeader.split(' ')[1];
@@ -19,25 +19,33 @@ module.exports = (req, res, next) => {
     decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
-      const error = new MyError('Your session has expired. Please log in again.');
-      error.statusCode = 401;
-      next(error);
+      next(new CustomError('Your session has expired. Please log in again.', 401));
     } else {
       err.statusCode = 500;
-      err.message = null;
+      err.message = 'Could not decode token.';
       next(err);
     }
     return;
   }
 
   if (!decodedToken) {
-    const error = new MyError('You are not authenticated.');
-    error.statusCode = 401;
-    throw error;
+    throw new CustomError('You are not authenticated.', 401);
   }
 
-  req.user = decodedToken;
-  req.mobileNumber = decodedToken.mobileNumber;
+  try {
+    const user = await prisma.user.findUnique({ where: { id: decodedToken.id } });
+    if (!user) {
+      throw new CustomError('User not found.', 404);
+    }
 
-  next();
+    req.user = {
+      id: user.id,
+      email: user.email,
+      mobileNumber: user.mobileNumber,
+    };
+
+    next();
+  } catch (error) {
+    next(error);
+  }
 };
