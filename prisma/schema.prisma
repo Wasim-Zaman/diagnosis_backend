@@ -26,11 +26,26 @@ enum Gender {
   OTHER
 }
 
-
 model Banner {
   id        String   @id @default(uuid())
   image     String
   status    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id                  String   @id @default(uuid())
+  name                String
+  description         String
+  image               String?
+  amount              Float
+  discount            Float?
+  fasting_time        String?
+  result_duration     String?
+  sample_type         String
+  age_group           String
+  home_sample_collection Boolean @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }

@@ -59,7 +59,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/BannersResponse'
-
+ *
  * /api/banner/v1/banner/{id}:
  *   get:
  *     summary: Get banner by ID
@@ -128,6 +128,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
+ */
 
 /**
  * @swagger
@@ -197,4 +198,93 @@
  *           example: true
  *         message:
  *           type: string
+ */
+
+/**
+ * @swagger
+ * /api/banner/v1/banners/paginated:
+ *   get:
+ *     summary: Get paginated banners
+ *     tags: [Banner]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: "Page number (default: 1)"
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: "Number of items per page (default: 10)"
+ *     responses:
+ *       200:
+ *         description: Paginated banners retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginatedBannersResponse'
+ *       404:
+ *         description: No banners found
+ *
+ * /api/banner/v1/banners/active:
+ *   get:
+ *     summary: Get active banners
+ *     tags: [Banner]
+ *     responses:
+ *       200:
+ *         description: Active banners retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ActiveBannersResponse'
+ *       404:
+ *         description: No active banners found
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     PaginatedBannersResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: integer
+ *           example: 200
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         message:
+ *           type: string
+ *         data:
+ *           type: object
+ *           properties:
+ *             data:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Banner'
+ *             totalPages:
+ *               type: integer
+ *             currentPage:
+ *               type: integer
+ *             totalBanners:
+ *               type: integer
+ *     ActiveBannersResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: integer
+ *           example: 200
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         message:
+ *           type: string
+ *         data:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Banner'
  */

@@ -122,3 +122,60 @@ exports.deleteBannerById = async (req, res, next) => {
     }
   }
 };
+
+// Get paginated banners
+exports.getPaginatedBanners = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const banners = await prisma.banner.findMany({
+      skip,
+      take: Number(limit),
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    const totalBanners = await prisma.banner.count();
+
+    if (!banners.length) {
+      throw new CustomError('No banners found', 404);
+    }
+
+    res.status(200).json(
+      response(200, true, 'Banners retrieved successfully', {
+        data: banners,
+        totalPages: Math.ceil(totalBanners / Number(limit)),
+        currentPage: Number(page),
+        totalBanners,
+      })
+    );
+  } catch (error) {
+    console.log(`Error in getPaginatedBanners: ${error.message}`);
+    next(error);
+  }
+};
+
+// Get active banners
+exports.getActiveBanners = async (req, res, next) => {
+  try {
+    const activeBanners = await prisma.banner.findMany({
+      where: {
+        status: 1,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    if (!activeBanners.length) {
+      throw new CustomError('No active banners found', 404);
+    }
+
+    res.status(200).json(response(200, true, 'Active banners retrieved successfully', activeBanners));
+  } catch (error) {
+    console.log(`Error in getActiveBanners: ${error.message}`);
+    next(error);
+  }
+};

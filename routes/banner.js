@@ -30,5 +30,7 @@ router.put(
   bannerController.updateBannerById
 );
 router.delete('/v1/banner/:id', isAuth, bannerController.deleteBannerById);
+router.get('/v1/banners/paginated', isAuth, bannerController.getPaginatedBanners);
+router.get('/v1/banners/active', bannerController.getActiveBanners);
 
 module.exports = router;
