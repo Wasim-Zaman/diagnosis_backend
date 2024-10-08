@@ -11,6 +11,7 @@ const AppError = require('./utils/error');
 const swaggerSpec = require('./config/swagger');
 const response = require('./utils/response');
 const userRoutes = require('./routes/user');
+const bannerRoutes = require('./routes/banner');
 
 // Import loggers from config
 const { httpLogger, appLogger } = require('./config/logger');
@@ -40,6 +41,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Add your routes...
 app.use('/api/user', userRoutes);
+app.use('/api/banner', bannerRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

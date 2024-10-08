@@ -25,3 +25,12 @@ enum Gender {
   FEMALE
   OTHER
 }
+
+
+model Banner {
+  id        String   @id @default(uuid())
+  image     String
+  status    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
