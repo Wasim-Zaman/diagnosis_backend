@@ -7,7 +7,7 @@ const response = require('../utils/response');
 
 // Joi validation schema
 const enquirySchema = Joi.object({
-  enquiry: Joi.string().optional(),
+  enquiry: Joi.string().allow(null, '').optional(),
   phoneNumber: Joi.string().required(),
   formated_date: Joi.string().optional(),
   image: Joi.string().optional(),
