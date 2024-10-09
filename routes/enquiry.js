@@ -4,7 +4,7 @@ const enquiryController = require('../controllers/enquiry');
 
 const router = express.Router();
 
-const uploadMultiple = {
+const multiple = {
   destination: 'uploads/enquiries',
   fields: [
     { name: 'image', maxCount: 1, fileTypes: ['images'] },
@@ -13,30 +13,18 @@ const uploadMultiple = {
   fileSizeLimit: 5 * 1024 * 1024, // 5MB limit
 };
 
-const uploadSingle = {
+const single = {
   destination: 'uploads/enquiries',
   filename: 'image',
 };
 
-router.post(
-  '/v1/enquiries',
-  uploadMultiple(uploadMultiple),
-  uploadSingle(uploadSingle),
-  enquiryController.createEnquiry
-);
-
-router.put(
-  '/v1/enquiries/:id',
-  uploadMultiple(uploadMultiple),
-  uploadSingle(uploadSingle),
-  enquiryController.updateEnquiryById
-);
-
-// Other routes...
+router.post('/v1/enquiries', uploadMultiple(multiple), uploadSingle(single), enquiryController.createEnquiry);
 
 router.get('/v1/enquiries', enquiryController.getEnquiries);
 
 router.get('/v1/enquiries/:id', enquiryController.getEnquiryById);
+
+router.put('/v1/enquiries/:id', uploadMultiple(multiple), uploadSingle(single), enquiryController.updateEnquiryById);
 
 router.delete('/v1/enquiries/:id', enquiryController.deleteEnquiryById);
 
