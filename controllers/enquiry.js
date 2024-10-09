@@ -19,6 +19,10 @@ const enquirySchema = Joi.object({
 // Create a new enquiry
 exports.createEnquiry = async (req, res, next) => {
   try {
+    console.log('Request body:', req.body);
+    console.log('Request file:', req.file);
+    console.log('Request files:', req.files);
+
     const { error, value } = enquirySchema.validate(req.body);
     if (error) {
       throw new CustomError(error.details[0].message, 400);
@@ -34,17 +38,24 @@ exports.createEnquiry = async (req, res, next) => {
       if (req.files.images) {
         value.images = req.files.images.map((file) => file.path);
       }
-      // Handle other file fields if necessary
     }
+
+    console.log('Validated and processed value:', value);
 
     const newEnquiry = await prisma.enquiry.create({
       data: value,
     });
 
+    console.log('Created enquiry:', newEnquiry);
+
     res.status(201).json(response(201, true, 'Enquiry created successfully', newEnquiry));
   } catch (error) {
-    console.log(`Error in createEnquiry: ${error.message}`);
-    next(error);
+    console.error('Error in createEnquiry:', error);
+    if (error instanceof CustomError) {
+      next(error);
+    } else {
+      next(new CustomError('An unexpected error occurred', 500));
+    }
   }
 };
 
