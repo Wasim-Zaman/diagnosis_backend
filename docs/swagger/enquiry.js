@@ -80,7 +80,7 @@
 
 /**
  * @swagger
- * /v1/enquiries:
+ * /api/enquiry/v1/enquiries:
  *   post:
  *     summary: Create a new enquiry
  *     tags: [Enquiry]
@@ -147,7 +147,7 @@
  *       404:
  *         description: No enquiries found
  *
- * /v1/enquiries/{id}:
+ * /api/enquiry/v1/enquiries/{id}:
  *   get:
  *     summary: Get an enquiry by ID
  *     tags: [Enquiry]
