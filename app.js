@@ -13,6 +13,7 @@ const response = require('./utils/response');
 const userRoutes = require('./routes/user');
 const bannerRoutes = require('./routes/banner');
 const serviceRoutes = require('./routes/service');
+const enquiryRoutes = require('./routes/enquiry');
 
 // Import loggers from config
 const { httpLogger, appLogger } = require('./config/logger');
@@ -44,7 +45,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/user', userRoutes);
 app.use('/api/banner', bannerRoutes);
 app.use('/api/service', serviceRoutes);
-
+app.use('/api/enquiry', enquiryRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Handle 404 errors
