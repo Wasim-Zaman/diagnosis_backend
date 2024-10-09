@@ -16,7 +16,7 @@ const serviceSchema = Joi.object({
   result_duration: Joi.string().optional(),
   sample_type: Joi.string().required(),
   age_group: Joi.string().required(),
-  home_sample_collection: Joi.boolean().default(false),
+  home_sample_collection: Joi.string().optional(),
 });
 
 // Create a new service

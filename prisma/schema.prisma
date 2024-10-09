@@ -35,19 +35,20 @@ model Banner {
 }
 
 model Service {
-  id                  String   @id @default(uuid())
-  name                String
-  description         String
-  image               String?
-  amount              Float
-  discount            Float?
-  fasting_time        String?
-  result_duration     String?
-  sample_type         String
-  age_group           String
-  home_sample_collection Boolean @default(false)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                     String    @id @default(uuid())
+  name                   String
+  description            String
+  image                  String?
+  amount                 Float
+  discount               Float?
+  fasting_time           String?
+  result_duration        String?
+  sample_type            String
+  age_group              String
+  home_sample_collection String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  packages               Package[]
 }
 
 model Enquiry {
@@ -61,4 +62,17 @@ model Enquiry {
   remarks      String?
   images       Json?
   updatedAt    DateTime @updatedAt
+}
+
+model Package {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  discount    Float?
+  image       String?
+  includes    Json
+  services    Service[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

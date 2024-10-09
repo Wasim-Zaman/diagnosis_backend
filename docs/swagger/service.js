@@ -46,7 +46,7 @@
  *               age_group:
  *                 type: string
  *               home_sample_collection:
- *                 type: boolean
+ *                 type: string
  *     responses:
  *       201:
  *         description: Service created successfully
@@ -192,7 +192,7 @@
  *         age_group:
  *           type: string
  *         home_sample_collection:
- *           type: boolean
+ *           type: string
  *         createdAt:
  *           type: string
  *           format: date-time
