@@ -62,10 +62,6 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
   // Use appLogger.error instead of console.log for errors
   appLogger.error(`Error: ${error.message}`, { stack: error.stack });
-  appLogger('Error in createEnquiry:', error);
-  appLogger('Request body:', req.body);
-  appLogger('Request file:', req.file);
-  appLogger('Request files:', req.files);
 
   let status = 500;
   let message = 'Something went wrong, please try again later or contact support.';
