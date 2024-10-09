@@ -24,12 +24,17 @@ exports.createEnquiry = async (req, res, next) => {
       throw new CustomError(error.details[0].message, 400);
     }
 
+    // Handle single file upload
     if (req.file) {
       value.image = req.file.path;
     }
 
-    if (req.files && req.files.images) {
-      value.images = req.files.images.map((file) => file.path);
+    // Handle multiple file uploads
+    if (req.files) {
+      if (req.files.images) {
+        value.images = req.files.images.map((file) => file.path);
+      }
+      // Handle other file fields if necessary
     }
 
     const newEnquiry = await prisma.enquiry.create({
