@@ -19,10 +19,6 @@ const enquirySchema = Joi.object({
 // Create a new enquiry
 exports.createEnquiry = async (req, res, next) => {
   try {
-    console.log('Request body:', req.body);
-    console.log('Request file:', req.file);
-    console.log('Request files:', req.files);
-
     const { error, value } = enquirySchema.validate(req.body);
     if (error) {
       throw new CustomError(error.details[0].message, 400);
@@ -50,12 +46,7 @@ exports.createEnquiry = async (req, res, next) => {
 
     res.status(201).json(response(201, true, 'Enquiry created successfully', newEnquiry));
   } catch (error) {
-    console.error('Error in createEnquiry:', error);
-    if (error instanceof CustomError) {
-      next(error);
-    } else {
-      next(new CustomError('An unexpected error occurred', 500));
-    }
+    next(error);
   }
 };
 
@@ -159,5 +150,30 @@ exports.deleteEnquiryById = async (req, res, next) => {
       console.log(`Error in deleteEnquiryById: ${error.message}`);
       next(error);
     }
+  }
+};
+
+// Get all enquiries without paginationd
+exports.getAllEnquiries = async (req, res, next) => {
+  try {
+    const enquiries = await prisma.enquiry.findMany({
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+
+    if (!enquiries.length) {
+      throw new CustomError('No enquiries found', 404);
+    }
+
+    res.status(200).json(
+      response(200, true, 'All enquiries retrieved successfully', {
+        data: enquiries,
+        totalEnquiries: enquiries.length,
+      })
+    );
+  } catch (error) {
+    console.log(`Error in getAllEnquiries: ${error.message}`);
+    next(error);
   }
 };

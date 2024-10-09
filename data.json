@@ -1,0 +1,270 @@
+{
+  "leads_information": [
+    {
+      "team_name": "Team 1",
+      "date": "2024-10-1",
+      "team_leader_name": "Leader 1",
+      "total_leads": 25,
+      "leads": [
+        {
+          "number": "8000000000",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000001",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000002",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000003",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000004",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000005",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000006",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000007",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000008",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000009",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000010",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000011",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000012",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000013",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000014",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000015",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000016",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000017",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000018",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000019",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000020",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000021",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000022",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000023",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000000024",
+          "enquiry_status": "IT",
+          "remarks": ""
+        }
+      ]
+    },
+    {
+      "team_name": "Team 2",
+      "date": "2024-10-2",
+      "team_leader_name": "Leader 2",
+      "total_leads": 25,
+      "leads": [
+        {
+          "number": "8000001000",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001001",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001002",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001003",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001004",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001005",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001006",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001007",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001008",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001009",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001010",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001011",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001012",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001013",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001014",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001015",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001016",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001017",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001018",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001019",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001020",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001021",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001022",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001023",
+          "enquiry_status": "IT",
+          "remarks": ""
+        },
+        {
+          "number": "8000001024",
+          "enquiry_status": "IT",
+          "remarks": ""
+        }
+      ]
+    }
+  ]
+}

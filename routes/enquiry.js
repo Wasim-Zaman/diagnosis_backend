@@ -22,6 +22,8 @@ router.post('/v1/enquiries', uploadMultiple(multiple), uploadSingle(single), enq
 
 router.get('/v1/enquiries', enquiryController.getEnquiries);
 
+router.get('/v1/enquiries/all', enquiryController.getAllEnquiries);
+
 router.get('/v1/enquiries/:id', enquiryController.getEnquiryById);
 
 router.put('/v1/enquiries/:id', uploadMultiple(multiple), uploadSingle(single), enquiryController.updateEnquiryById);
