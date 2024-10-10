@@ -41,7 +41,7 @@ model Banner {
 }
 
 model Service {
-  id                     String    @id @default(uuid())
+  id                     String           @id @default(uuid())
   name                   String
   description            String
   image                  String?
@@ -52,9 +52,10 @@ model Service {
   sample_type            String
   age_group              String
   home_sample_collection String?
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
   packages               Package[]
+  serviceBookings        ServiceBooking[]
 }
 
 model Enquiry {
@@ -81,4 +82,39 @@ model Package {
   services    Service[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model ServiceBooking {
+  id              String   @id @default(uuid())
+  patientName     String
+  mobileNumber    String
+  preference      Preference
+  address         String?
+  date            DateTime
+  time            String
+  paymentType     PaymentType
+  totalPrice      Float
+  status          Status
+  user            String
+  service         Service  @relation(fields: [serviceId], references: [id])
+  serviceId       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum Preference {
+  LAB_VISIT
+  HOME_SAMPLE
+  CLINIC
+}
+
+enum PaymentType {
+  ONLINE
+  CASH
+}
+
+enum Status {
+    COMPLETED
+    PENDING
+    CANCELLED
 }
