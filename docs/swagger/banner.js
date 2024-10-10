@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /api/v1/banner/v1/banner:
+ * /api/banner/v1/banner/v1/banner:
  *   post:
  *     summary: Create a new banner
  *     tags: [Banner]
@@ -60,7 +60,7 @@
  *             schema:
  *               $ref: '#/components/schemas/BannersResponse'
  *
- * /api/v1/banner/v1/banner/{id}:
+ * /api/banner/v1/banner/v1/banner/{id}:
  *   get:
  *     summary: Get banner by ID
  *     tags: [Banner]
@@ -202,7 +202,7 @@
 
 /**
  * @swagger
- * /api/v1/banner/v1/banners/paginated:
+ * /api/banner/v1/banner/v1/banners/paginated:
  *   get:
  *     summary: Get paginated banners
  *     tags: [Banner]
@@ -229,7 +229,7 @@
  *       404:
  *         description: No banners found
  *
- * /api/v1/banner/v1/banners/active:
+ * /api/banner/v1/banner/v1/banners/active:
  *   get:
  *     summary: Get active banners
  *     tags: [Banner]
