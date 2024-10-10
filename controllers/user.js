@@ -13,8 +13,11 @@ const Bcrypt = require('../utils/bcrypt');
 const registerSchema = Joi.object({
   fullName: Joi.string().required(),
   mobileNumber: Joi.string()
-    .pattern(/^[0-9]{10}$/)
-    .required(),
+    .pattern(/^\+[1-9]\d{1,14}$/)
+    .required()
+    .messages({
+      'string.pattern.base': 'Mobile number must be in international format (e.g., +923005447070)',
+    }),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
   age: Joi.number().integer().min(18).required(),
@@ -29,7 +32,12 @@ const loginSchema = Joi.object({
 
 const updateUserSchema = Joi.object({
   fullName: Joi.string(),
-  mobileNumber: Joi.string().pattern(/^[0-9]{10}$/),
+  mobileNumber: Joi.string()
+    .pattern(/^\+[1-9]\d{1,14}$/)
+    .required()
+    .messages({
+      'string.pattern.base': 'Mobile number must be in international format (e.g., +923005447070)',
+    }),
   email: Joi.string().email(),
   age: Joi.number().integer().min(18),
   gender: Joi.string().valid('MALE', 'FEMALE', 'OTHER'),
