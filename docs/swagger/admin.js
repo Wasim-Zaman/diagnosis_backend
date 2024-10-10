@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: Admin
- *   description: Authentication routes
+ *   description: Admin authentication routes
  */
 
 /**
@@ -35,6 +35,9 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
  *                 success:
  *                   type: boolean
  *                   example: true
@@ -48,35 +51,42 @@
  *                       type: object
  *                       properties:
  *                         id:
- *                           type: integer
- *                           example: 1
+ *                           type: string
+ *                           example: "550e8400-e29b-41d4-a716-446655440000"
  *                         email:
  *                           type: string
  *                           example: admin@example.com
+ *                     token:
+ *                       type: string
+ *                       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *       400:
  *         description: Email and password are required
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Email and password are required
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
  *         description: Invalid email or password
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Invalid email or password
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: integer
+ *           example: 400
+ *         success:
+ *           type: boolean
+ *           example: false
+ *         message:
+ *           type: string
+ *           example: Email and password are required
  */

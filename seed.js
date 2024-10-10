@@ -13,28 +13,38 @@ async function main() {
 
     const entries = Object.entries(jsonData.data);
     let count = 0;
+    const startFrom = 2166; // Start seeding from this index
 
-    for (const [id, enquiryData] of entries) {
-      await prisma.enquiry.create({
-        data: {
-          id: id,
-          phoneNumber: enquiryData.phoneNumber,
-          enquiry: enquiryData.enquiry,
-          status: enquiryData.status,
-          remarks: enquiryData.remarks,
-          formated_date: enquiryData.formated_date,
-          image: enquiryData.image,
-          images: enquiryData.images,
-          created_at: new Date(enquiryData.created_at.__time__),
-        },
+    for (let i = startFrom; i < entries.length; i++) {
+      const [id, enquiryData] = entries[i];
+
+      // Check if the record already exists
+      const existingRecord = await prisma.enquiry.findUnique({
+        where: { id: id },
       });
-      count++;
-      if (count % 100 === 0) {
-        console.log(`Seeded ${count} enquiries`);
+
+      if (!existingRecord) {
+        await prisma.enquiry.create({
+          data: {
+            id: id,
+            phoneNumber: enquiryData.phoneNumber,
+            enquiry: enquiryData.enquiry,
+            status: enquiryData.status,
+            remarks: enquiryData.remarks,
+            formated_date: enquiryData.formated_date,
+            image: enquiryData.image,
+            images: enquiryData.images,
+            created_at: new Date(enquiryData.created_at.__time__),
+          },
+        });
+        count++;
+        if (count % 100 === 0) {
+          console.log(`Seeded ${count} new enquiries`);
+        }
       }
     }
 
-    console.log(`Seeding completed successfully! Total enquiries seeded: ${count}`);
+    console.log(`Seeding completed successfully! Total new enquiries seeded: ${count}`);
   } catch (error) {
     console.error('Error seeding data:', error);
   } finally {
