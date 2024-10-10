@@ -10,6 +10,7 @@ require('dotenv').config();
 const AppError = require('./utils/error');
 const swaggerSpec = require('./config/swagger');
 const response = require('./utils/response');
+const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/user');
 const bannerRoutes = require('./routes/banner');
 const serviceRoutes = require('./routes/service');
@@ -43,6 +44,7 @@ app.use(cors());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Add your routes...
+app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/banner', bannerRoutes);
 app.use('/api/service', serviceRoutes);
