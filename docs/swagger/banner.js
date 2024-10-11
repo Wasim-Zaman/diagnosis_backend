@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: Banner
- *   description: Banner management
+ *   description: Banner management routes
  */
 
 /**
@@ -26,9 +26,11 @@
  *               status:
  *                 type: integer
  *                 enum: [0, 1]
+ *                 description: "Banner status (0: inactive, 1: active)"
  *               image:
  *                 type: string
  *                 format: binary
+ *                 description: Banner image file
  *     responses:
  *       201:
  *         description: Banner created successfully
@@ -37,10 +39,22 @@
  *             schema:
  *               $ref: '#/components/schemas/BannerResponse'
  *       400:
- *         description: Bad request
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
  *         description: Unauthorized
- *
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/banner/v1/banners:
  *   get:
  *     summary: Get all banners
  *     tags: [Banner]
@@ -53,11 +67,22 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/BannersResponse'
- *       401:
- *         description: Unauthorized
  *       404:
  *         description: No banners found
- *
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
  * /api/banner/v1/banner/{id}:
  *   get:
  *     summary: Get banner by ID
@@ -70,6 +95,7 @@
  *         required: true
  *         schema:
  *           type: string
+ *         description: Banner ID
  *     responses:
  *       200:
  *         description: Banner found successfully
@@ -77,11 +103,18 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/BannerResponse'
- *       401:
- *         description: Unauthorized
  *       404:
  *         description: Banner not found
- *
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *   put:
  *     summary: Update banner by ID
  *     tags: [Banner]
@@ -93,6 +126,7 @@
  *         required: true
  *         schema:
  *           type: string
+ *         description: Banner ID
  *     requestBody:
  *       required: true
  *       content:
@@ -103,9 +137,11 @@
  *               status:
  *                 type: integer
  *                 enum: [0, 1]
+ *                 description: "Banner status (0: inactive, 1: active)"
  *               image:
  *                 type: string
  *                 format: binary
+ *                 description: Banner image file
  *     responses:
  *       200:
  *         description: Banner updated successfully
@@ -114,12 +150,23 @@
  *             schema:
  *               $ref: '#/components/schemas/BannerResponse'
  *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
  *         description: Banner not found
- *
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *   delete:
  *     summary: Delete banner by ID
  *     tags: [Banner]
@@ -131,6 +178,7 @@
  *         required: true
  *         schema:
  *           type: string
+ *         description: Banner ID
  *     responses:
  *       200:
  *         description: Banner deleted successfully
@@ -138,11 +186,22 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
- *       401:
- *         description: Unauthorized
  *       404:
  *         description: Banner not found
- *
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
  * /api/banner/v1/banners/paginated:
  *   get:
  *     summary: Get paginated banners
@@ -154,24 +213,37 @@
  *         name: page
  *         schema:
  *           type: integer
- *         description: "Page number (default: 1)"
+ *           default: 1
+ *         description: Page number
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *         description: "Number of items per page (default: 10)"
+ *           default: 10
+ *         description: Number of items per page
  *     responses:
  *       200:
- *         description: Paginated banners retrieved successfully
+ *         description: Banners retrieved successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PaginatedBannersResponse'
- *       401:
- *         description: Unauthorized
  *       404:
  *         description: No banners found
- *
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
  * /api/banner/v1/banners/active:
  *   get:
  *     summary: Get active banners
@@ -182,9 +254,13 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/ActiveBannersResponse'
+ *               $ref: '#/components/schemas/BannersResponse'
  *       404:
  *         description: No active banners found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 
 /**
@@ -196,11 +272,14 @@
  *       properties:
  *         id:
  *           type: string
+ *           example: "550e8400-e29b-41d4-a716-446655440000"
+ *         image:
+ *           type: string
+ *           example: "uploads/banners/banner-image.jpg"
  *         status:
  *           type: integer
  *           enum: [0, 1]
- *         image:
- *           type: string
+ *           example: 1
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -218,6 +297,7 @@
  *           example: true
  *         message:
  *           type: string
+ *           example: Banner operation successful
  *         data:
  *           $ref: '#/components/schemas/Banner'
  *     BannersResponse:
@@ -231,6 +311,7 @@
  *           example: true
  *         message:
  *           type: string
+ *           example: Banners retrieved successfully
  *         data:
  *           type: array
  *           items:
@@ -246,6 +327,7 @@
  *           example: true
  *         message:
  *           type: string
+ *           example: Banners retrieved successfully
  *         data:
  *           type: object
  *           properties:
@@ -255,25 +337,13 @@
  *                 $ref: '#/components/schemas/Banner'
  *             totalPages:
  *               type: integer
+ *               example: 5
  *             currentPage:
  *               type: integer
+ *               example: 1
  *             totalBanners:
  *               type: integer
- *     ActiveBannersResponse:
- *       type: object
- *       properties:
- *         status:
- *           type: integer
- *           example: 200
- *         success:
- *           type: boolean
- *           example: true
- *         message:
- *           type: string
- *         data:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Banner'
+ *               example: 50
  *     SuccessResponse:
  *       type: object
  *       properties:
@@ -285,4 +355,17 @@
  *           example: true
  *         message:
  *           type: string
+ *           example: Operation successful
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: integer
+ *           example: 400
+ *         success:
+ *           type: boolean
+ *           example: false
+ *         message:
+ *           type: string
+ *           example: Error message
  */
