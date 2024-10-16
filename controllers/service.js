@@ -48,19 +48,27 @@ exports.getServices = async (req, res, next) => {
     const { page = 1, limit = 10, query = '' } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
-    const services = await prisma.service.findMany({
-      where: {
-        OR: [{ name: { contains: query } }, { description: { contains: query } }],
-      },
-      skip,
-      take: Number(limit),
-    });
+    let services;
+    let totalServices;
 
-    const totalServices = await prisma.service.count({
-      where: {
-        OR: [{ name: { contains: query } }, { description: { contains: query } }],
-      },
-    });
+    try {
+      services = await prisma.service.findMany({
+        where: {
+          OR: [{ name: { contains: query } }, { description: { contains: query } }],
+        },
+        skip,
+        take: Number(limit),
+      });
+
+      totalServices = await prisma.service.count({
+        where: {
+          OR: [{ name: { contains: query } }, { description: { contains: query } }],
+        },
+      });
+    } catch (dbError) {
+      console.error('Database connection error:', dbError);
+      throw new CustomError('Unable to connect to the database. Please try again later.', 500);
+    }
 
     if (!services.length) {
       throw new CustomError('No services found', 404);

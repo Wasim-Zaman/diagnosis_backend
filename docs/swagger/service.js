@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: Service
- *   description: Service management
+ *   description: Service management routes
  */
 
 /**
@@ -37,6 +37,8 @@
  *                 type: number
  *               discount:
  *                 type: number
+ *                 minimum: 0
+ *                 maximum: 100
  *               fasting_time:
  *                 type: string
  *               result_duration:
@@ -54,19 +56,38 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ServiceResponse'
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/service/v1/services:
  *   get:
- *     summary: Get all services
+ *     summary: Get all services with pagination
  *     tags: [Service]
  *     parameters:
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
+ *           default: 1
  *         description: Page number
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
+ *           default: 10
  *         description: Number of items per page
  *       - in: query
  *         name: query
@@ -79,8 +100,17 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/ServicesResponse'
- *
+ *               $ref: '#/components/schemas/PaginatedServicesResponse'
+ *       404:
+ *         description: No services found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
  * /api/service/v1/service/{id}:
  *   get:
  *     summary: Get service by ID
@@ -91,6 +121,7 @@
  *         required: true
  *         schema:
  *           type: string
+ *         description: Service ID
  *     responses:
  *       200:
  *         description: Service found successfully
@@ -98,6 +129,12 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ServiceResponse'
+ *       404:
+ *         description: Service not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *   put:
  *     summary: Update service by ID
  *     tags: [Service]
@@ -109,6 +146,7 @@
  *         required: true
  *         schema:
  *           type: string
+ *         description: Service ID
  *     requestBody:
  *       required: true
  *       content:
@@ -127,6 +165,8 @@
  *                 type: number
  *               discount:
  *                 type: number
+ *                 minimum: 0
+ *                 maximum: 100
  *               fasting_time:
  *                 type: string
  *               result_duration:
@@ -136,7 +176,7 @@
  *               age_group:
  *                 type: string
  *               home_sample_collection:
- *                 type: boolean
+ *                 type: string
  *     responses:
  *       200:
  *         description: Service updated successfully
@@ -144,6 +184,24 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ServiceResponse'
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Service not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *   delete:
  *     summary: Delete service by ID
  *     tags: [Service]
@@ -155,6 +213,7 @@
  *         required: true
  *         schema:
  *           type: string
+ *         description: Service ID
  *     responses:
  *       200:
  *         description: Service deleted successfully
@@ -162,6 +221,18 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Service not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 
 /**
@@ -210,9 +281,10 @@
  *           example: true
  *         message:
  *           type: string
+ *           example: Service operation successful
  *         data:
  *           $ref: '#/components/schemas/Service'
- *     ServicesResponse:
+ *     PaginatedServicesResponse:
  *       type: object
  *       properties:
  *         status:
@@ -223,6 +295,7 @@
  *           example: true
  *         message:
  *           type: string
+ *           example: Services retrieved successfully
  *         data:
  *           type: object
  *           properties:
@@ -232,10 +305,13 @@
  *                 $ref: '#/components/schemas/Service'
  *             totalPages:
  *               type: integer
+ *               example: 5
  *             currentPage:
  *               type: integer
+ *               example: 1
  *             totalServices:
  *               type: integer
+ *               example: 50
  *     SuccessResponse:
  *       type: object
  *       properties:
@@ -247,4 +323,17 @@
  *           example: true
  *         message:
  *           type: string
+ *           example: Operation successful
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: integer
+ *           example: 400
+ *         success:
+ *           type: boolean
+ *           example: false
+ *         message:
+ *           type: string
+ *           example: Error message
  */

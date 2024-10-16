@@ -1,9 +1,10 @@
 const express = require('express');
 const { uploadSingle } = require('multermate');
-const router = express.Router();
+
 const serviceController = require('../controllers/service');
 const isAuth = require('../middleware/isAuth');
 
+const router = express.Router();
 const uploadConfig = {
   destination: 'uploads/services',
   fileTypes: ['images'],
