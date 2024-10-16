@@ -46,6 +46,19 @@ exports.createPackage = async (req, res, next) => {
       packageData.image = req.file.path;
     }
 
+    // Check if all service IDs exist before creating the package
+    const existingServices = await prisma.service.findMany({
+      where: {
+        id: {
+          in: services,
+        },
+      },
+    });
+
+    if (existingServices.length !== services.length) {
+      throw new CustomError('One or more service IDs do not exist', 400);
+    }
+
     const newPackage = await prisma.package.create({
       data: {
         ...packageData,

@@ -15,8 +15,8 @@ const uploadConfig = {
 };
 
 router.post('/v1/package', isAdmin, uploadSingle(uploadConfig), packageController.createPackage);
-router.get('/v1/package', isAuth, packageController.getPackages);
-router.get('/v1/package/:id', isAuth, packageController.getPackageById);
+router.get('/v1/package', packageController.getPackages);
+router.get('/v1/package/:id', packageController.getPackageById);
 router.put('/v1/package/:id', isAdmin, uploadSingle(uploadConfig), packageController.updatePackageById);
 router.delete('/v1/package/:id', isAdmin, packageController.deletePackageById);
 
