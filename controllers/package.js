@@ -12,7 +12,7 @@ const packageSchema = Joi.object({
   price: Joi.number().positive().required(),
   discount: Joi.number().min(0).max(100).optional(),
   image: Joi.string().optional(),
-  includes: Joi.array().items(Joi.string()).required(),
+  includes: Joi.alternatives().try(Joi.array().items(Joi.string()), Joi.string()).required(),
   services: Joi.array().items(Joi.string()).required(),
 });
 
@@ -25,6 +25,10 @@ exports.createPackage = async (req, res, next) => {
     }
 
     const { services, ...packageData } = value;
+
+    // Ensure includes is always an array
+    packageData.includes = Array.isArray(packageData.includes) ? packageData.includes : [packageData.includes];
+
     packageData.includes = JSON.stringify(packageData.includes);
 
     if (req.file) {
