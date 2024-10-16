@@ -13,21 +13,32 @@ const packageSchema = Joi.object({
   discount: Joi.number().min(0).max(100).optional(),
   image: Joi.string().optional(),
   includes: Joi.alternatives().try(Joi.array().items(Joi.string()), Joi.string()).required(),
-  services: Joi.array().items(Joi.string()).required(),
+  services: Joi.alternatives().try(Joi.array().items(Joi.string()), Joi.string()).required(),
 });
 
 // Create a new package
 exports.createPackage = async (req, res, next) => {
   try {
+    console.log('Request body:', req.body);
+
+    // Convert price and discount to numbers
+    if (typeof req.body.price === 'string') {
+      req.body.price = parseFloat(req.body.price);
+    }
+    if (typeof req.body.discount === 'string') {
+      req.body.discount = parseFloat(req.body.discount);
+    }
+
+    // Ensure includes and services are arrays
+    req.body.includes = Array.isArray(req.body.includes) ? req.body.includes : [req.body.includes];
+    req.body.services = Array.isArray(req.body.services) ? req.body.services : [req.body.services];
+
     const { error, value } = packageSchema.validate(req.body);
     if (error) {
       throw new CustomError(error.details[0].message, 400);
     }
 
     const { services, ...packageData } = value;
-
-    // Ensure includes is always an array
-    packageData.includes = Array.isArray(packageData.includes) ? packageData.includes : [packageData.includes];
 
     packageData.includes = JSON.stringify(packageData.includes);
 

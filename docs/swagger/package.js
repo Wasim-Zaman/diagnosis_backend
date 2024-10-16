@@ -53,19 +53,27 @@
  *           type: string
  *         price:
  *           type: number
+ *           description: Can be sent as a number or a string (will be parsed to a number)
  *         discount:
  *           type: number
+ *           description: Optional. Can be sent as a number or a string (will be parsed to a number)
  *         image:
  *           type: string
  *           format: binary
  *         includes:
- *           type: array
- *           items:
- *             type: string
+ *           oneOf:
+ *             - type: array
+ *               items:
+ *                 type: string
+ *             - type: string
+ *           description: Can be a single string or an array of strings
  *         services:
- *           type: array
- *           items:
- *             type: string
+ *           oneOf:
+ *             - type: array
+ *               items:
+ *                 type: string
+ *             - type: string
+ *           description: Can be a single string (service ID) or an array of strings (service IDs)
  *     PackageResponse:
  *       type: object
  *       properties:
@@ -128,8 +136,22 @@
  *               $ref: '#/components/schemas/PackageResponse'
  *       400:
  *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
  *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *   get:
  *     summary: Get all packages
  *     tags: [Package]
