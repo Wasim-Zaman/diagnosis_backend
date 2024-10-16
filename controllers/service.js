@@ -141,3 +141,30 @@ exports.deleteServiceById = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get all services without pagination
+exports.getAllServices = async (req, res, next) => {
+  try {
+    let services;
+
+    try {
+      services = await prisma.service.findMany({
+        orderBy: {
+          name: 'asc', // You can change this to sort as needed
+        },
+      });
+    } catch (dbError) {
+      console.error('Database connection error:', dbError);
+      throw new CustomError('Unable to connect to the database. Please try again later.', 500);
+    }
+
+    if (!services.length) {
+      throw new CustomError('No services found', 404);
+    }
+
+    res.status(200).json(response(200, true, 'All services retrieved successfully', services));
+  } catch (error) {
+    console.log(`Error in getAllServices: ${error.message}`);
+    next(error);
+  }
+};

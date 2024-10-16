@@ -15,6 +15,7 @@ const uploadConfig = {
 // Service routes
 router.post('/v1/service', isAuth, uploadSingle(uploadConfig), serviceController.createService);
 router.get('/v1/services', serviceController.getServices);
+router.get('/v1/services/all', serviceController.getAllServices);
 router.get('/v1/service/:id', serviceController.getServiceById);
 router.put('/v1/service/:id', isAuth, uploadSingle(uploadConfig), serviceController.updateServiceById);
 router.delete('/v1/service/:id', isAuth, serviceController.deleteServiceById);

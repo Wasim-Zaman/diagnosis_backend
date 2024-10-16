@@ -337,3 +337,44 @@
  *           type: string
  *           example: Error message
  */
+
+/**
+ * @swagger
+ * /api/service/v1/services/all:
+ *   get:
+ *     summary: Get all services without pagination
+ *     tags: [Service]
+ *     responses:
+ *       200:
+ *         description: All services retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: All services retrieved successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Service'
+ *       404:
+ *         description: No services found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
