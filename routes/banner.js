@@ -5,7 +5,7 @@ const bannerController = require('../controllers/banner');
 const isAuth = require('../middleware/isAuth');
 
 const config = {
-  destination: 'uploads/banners',
+  destination: 'uploads',
   fileTypes: ['images'],
   filename: 'image',
 };

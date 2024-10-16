@@ -8,7 +8,7 @@ const isAdmin = require('../middleware/isAdmin');
 const router = express.Router();
 
 const uploadConfig = {
-  destination: 'uploads/packages',
+  destination: 'uploads',
   filename: 'image',
   fileTypes: ['images'],
   fileSizeLimit: 5 * 1024 * 1024, // 5MB limit

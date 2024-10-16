@@ -14,7 +14,7 @@ const multiple = {
 };
 
 const single = {
-  destination: 'uploads/enquiries',
+  destination: 'uploads',
   filename: 'image',
 };
 

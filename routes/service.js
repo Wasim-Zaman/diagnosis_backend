@@ -6,7 +6,7 @@ const isAuth = require('../middleware/isAuth');
 
 const router = express.Router();
 const uploadConfig = {
-  destination: 'uploads/services',
+  destination: 'uploads',
   fileTypes: ['images'],
   fileSizeLimit: 5 * 1024 * 1024, // 5MB
   filename: 'image',
