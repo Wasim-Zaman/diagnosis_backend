@@ -79,7 +79,7 @@ model Package {
   discount    Float?
   image       String?
   includes    Json
-  faqs        Json
+  faqs        Json?
   service     Service  @relation(fields: [serviceId], references: [id])
   serviceId   String
   createdAt   DateTime @default(now())
