@@ -13,7 +13,7 @@ const packageSchema = Joi.object({
   discount: Joi.number().min(0).max(100).optional(),
   image: Joi.string().optional(),
   includes: Joi.alternatives().try(Joi.array().items(Joi.string()), Joi.string()).required(),
-  services: Joi.alternatives().try(Joi.array().items(Joi.string()), Joi.string()).required(),
+  serviceId: Joi.string().required(),
 });
 
 // Create a new package
@@ -29,16 +29,15 @@ exports.createPackage = async (req, res, next) => {
       req.body.discount = parseFloat(req.body.discount);
     }
 
-    // Ensure includes and services are arrays
+    // Ensure includes is an array
     req.body.includes = Array.isArray(req.body.includes) ? req.body.includes : [req.body.includes];
-    req.body.services = Array.isArray(req.body.services) ? req.body.services : [req.body.services];
 
     const { error, value } = packageSchema.validate(req.body);
     if (error) {
       throw new CustomError(error.details[0].message, 400);
     }
 
-    const { services, ...packageData } = value;
+    const { serviceId, ...packageData } = value;
 
     packageData.includes = JSON.stringify(packageData.includes);
 
@@ -46,27 +45,21 @@ exports.createPackage = async (req, res, next) => {
       packageData.image = req.file.path;
     }
 
-    // Check if all service IDs exist before creating the package
-    const existingServices = await prisma.service.findMany({
-      where: {
-        id: {
-          in: services,
-        },
-      },
+    // Check if the service ID exists before creating the package
+    const existingService = await prisma.service.findUnique({
+      where: { id: serviceId },
     });
 
-    if (existingServices.length !== services.length) {
-      throw new CustomError('One or more service IDs do not exist', 400);
+    if (!existingService) {
+      throw new CustomError('The specified service ID does not exist', 400);
     }
 
     const newPackage = await prisma.package.create({
       data: {
         ...packageData,
-        services: {
-          connect: services.map((id) => ({ id })),
-        },
+        serviceId,
       },
-      include: { services: true },
+      include: { service: true },
     });
 
     res.status(201).json(response(201, true, 'Package created successfully', newPackage));
@@ -88,7 +81,7 @@ exports.getPackages = async (req, res, next) => {
       },
       skip,
       take: Number(limit),
-      include: { services: true },
+      include: { service: true },
     });
 
     const totalPackages = await prisma.package.count({
@@ -121,7 +114,7 @@ exports.getPackageById = async (req, res, next) => {
     const { id } = req.params;
     const package = await prisma.package.findUnique({
       where: { id },
-      include: { services: true },
+      include: { service: true },
     });
 
     if (!package) {
@@ -144,7 +137,7 @@ exports.updatePackageById = async (req, res, next) => {
       throw new CustomError(error.details[0].message, 400);
     }
 
-    const { services, ...packageData } = value;
+    const { serviceId, ...packageData } = value;
     packageData.includes = JSON.stringify(packageData.includes);
 
     if (req.file) {
@@ -155,11 +148,9 @@ exports.updatePackageById = async (req, res, next) => {
       where: { id },
       data: {
         ...packageData,
-        services: {
-          set: services.map((id) => ({ id })),
-        },
+        serviceId,
       },
-      include: { services: true },
+      include: { service: true },
     });
 
     res.status(200).json(response(200, true, 'Package updated successfully', updatedPackage));

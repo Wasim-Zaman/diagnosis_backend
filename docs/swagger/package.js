@@ -28,10 +28,8 @@
  *           type: array
  *           items:
  *             type: string
- *         services:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Service'
+ *         service:
+ *           $ref: '#/components/schemas/Service'
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -45,7 +43,7 @@
  *         - description
  *         - price
  *         - includes
- *         - services
+ *         - serviceId
  *       properties:
  *         name:
  *           type: string
@@ -67,13 +65,9 @@
  *                 type: string
  *             - type: string
  *           description: Can be a single string or an array of strings
- *         services:
- *           oneOf:
- *             - type: array
- *               items:
- *                 type: string
- *             - type: string
- *           description: Can be a single string (service ID) or an array of strings (service IDs)
+ *         serviceId:
+ *           type: string
+ *           description: ID of the associated service
  *     PackageResponse:
  *       type: object
  *       properties:

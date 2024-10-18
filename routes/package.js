@@ -11,7 +11,7 @@ const uploadConfig = {
   destination: 'uploads',
   filename: 'image',
   fileTypes: ['images'],
-  fileSizeLimit: 5 * 1024 * 1024, // 5MB limit
+  fileSizeLimit: 5 * 1024 * 1024,
 };
 
 router.post('/v1/package', isAdmin, uploadSingle(uploadConfig), packageController.createPackage);

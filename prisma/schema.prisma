@@ -72,16 +72,17 @@ model Enquiry {
 }
 
 model Package {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String
   price       Float
   discount    Float?
   image       String?
   includes    Json
-  services    Service[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  service     Service  @relation(fields: [serviceId], references: [id])
+  serviceId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model ServiceBooking {
