@@ -5,14 +5,29 @@ const Joi = require('joi');
 const CustomError = require('../utils/error');
 const response = require('../utils/response');
 
-// Joi validation schema
+// Update the Joi validation schema
 const packageSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
   price: Joi.number().positive().required(),
   discount: Joi.number().min(0).max(100).optional(),
   image: Joi.string().optional(),
-  includes: Joi.object().pattern(Joi.string(), Joi.array().items(Joi.string())).required(),
+  includes: Joi.array()
+    .items(
+      Joi.object({
+        include: Joi.string().required(),
+        bullets: Joi.array().items(Joi.string()).required(),
+      })
+    )
+    .required(),
+  faqs: Joi.array()
+    .items(
+      Joi.object({
+        title: Joi.string().required(),
+        description: Joi.string().required(),
+      })
+    )
+    .optional(),
   serviceId: Joi.string().required(),
 });
 
@@ -35,9 +50,6 @@ exports.createPackage = async (req, res, next) => {
     }
 
     const { serviceId, ...packageData } = value;
-
-    // No need to stringify includes as it's already a JSON object
-    // packageData.includes = JSON.stringify(packageData.includes);
 
     if (req.file) {
       packageData.image = req.file.path;
@@ -136,9 +148,6 @@ exports.updatePackageById = async (req, res, next) => {
     }
 
     const { serviceId, ...packageData } = value;
-
-    // No need to stringify includes as it's already a JSON object
-    // packageData.includes = JSON.stringify(packageData.includes);
 
     if (req.file) {
       packageData.image = req.file.path;

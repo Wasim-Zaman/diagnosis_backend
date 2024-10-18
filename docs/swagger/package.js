@@ -25,11 +25,25 @@
  *         image:
  *           type: string
  *         includes:
- *           type: object
- *           additionalProperties:
- *             type: array
- *             items:
- *               type: string
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               include:
+ *                 type: string
+ *               bullets:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *         faqs:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
  *         serviceId:
  *           type: string
  *         service:
@@ -63,15 +77,35 @@
  *           type: string
  *           format: binary
  *         includes:
- *           type: object
- *           additionalProperties:
- *             type: array
- *             items:
- *               type: string
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               include:
+ *                 type: string
+ *               bullets:
+ *                 type: array
+ *                 items:
+ *                   type: string
  *           example:
- *             a: ["a", "b", "c"]
- *             b: ["a", "b", "c"]
- *             c: ["a", "b", "c"]
+ *             - include: "Feature 1"
+ *               bullets: ["Point A", "Point B", "Point C"]
+ *             - include: "Feature 2"
+ *               bullets: ["Point X", "Point Y", "Point Z"]
+ *         faqs:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *           example:
+ *             - title: "FAQ Question 1"
+ *               description: "Answer to FAQ 1"
+ *             - title: "FAQ Question 2"
+ *               description: "Answer to FAQ 2"
  *         serviceId:
  *           type: string
  *           description: ID of the associated service
