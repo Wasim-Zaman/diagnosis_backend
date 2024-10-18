@@ -25,9 +25,13 @@
  *         image:
  *           type: string
  *         includes:
- *           type: array
- *           items:
- *             type: string
+ *           type: object
+ *           additionalProperties:
+ *             type: array
+ *             items:
+ *               type: string
+ *         serviceId:
+ *           type: string
  *         service:
  *           $ref: '#/components/schemas/Service'
  *         createdAt:
@@ -59,12 +63,15 @@
  *           type: string
  *           format: binary
  *         includes:
- *           oneOf:
- *             - type: array
- *               items:
- *                 type: string
- *             - type: string
- *           description: Can be a single string or an array of strings
+ *           type: object
+ *           additionalProperties:
+ *             type: array
+ *             items:
+ *               type: string
+ *           example:
+ *             a: ["a", "b", "c"]
+ *             b: ["a", "b", "c"]
+ *             c: ["a", "b", "c"]
  *         serviceId:
  *           type: string
  *           description: ID of the associated service

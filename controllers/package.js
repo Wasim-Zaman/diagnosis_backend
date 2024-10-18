@@ -12,7 +12,7 @@ const packageSchema = Joi.object({
   price: Joi.number().positive().required(),
   discount: Joi.number().min(0).max(100).optional(),
   image: Joi.string().optional(),
-  includes: Joi.alternatives().try(Joi.array().items(Joi.string()), Joi.string()).required(),
+  includes: Joi.object().pattern(Joi.string(), Joi.array().items(Joi.string())).required(),
   serviceId: Joi.string().required(),
 });
 
@@ -29,9 +29,6 @@ exports.createPackage = async (req, res, next) => {
       req.body.discount = parseFloat(req.body.discount);
     }
 
-    // Ensure includes is an array
-    req.body.includes = Array.isArray(req.body.includes) ? req.body.includes : [req.body.includes];
-
     const { error, value } = packageSchema.validate(req.body);
     if (error) {
       throw new CustomError(error.details[0].message, 400);
@@ -39,7 +36,8 @@ exports.createPackage = async (req, res, next) => {
 
     const { serviceId, ...packageData } = value;
 
-    packageData.includes = JSON.stringify(packageData.includes);
+    // No need to stringify includes as it's already a JSON object
+    // packageData.includes = JSON.stringify(packageData.includes);
 
     if (req.file) {
       packageData.image = req.file.path;
@@ -138,7 +136,9 @@ exports.updatePackageById = async (req, res, next) => {
     }
 
     const { serviceId, ...packageData } = value;
-    packageData.includes = JSON.stringify(packageData.includes);
+
+    // No need to stringify includes as it's already a JSON object
+    // packageData.includes = JSON.stringify(packageData.includes);
 
     if (req.file) {
       packageData.image = req.file.path;
