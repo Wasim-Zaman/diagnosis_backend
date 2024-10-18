@@ -15,26 +15,69 @@ const packageSchema = Joi.object({
   includes: Joi.array()
     .items(
       Joi.object({
-        include: Joi.string().required(),
-        bullets: Joi.array().items(Joi.string()).required(),
+        title: Joi.string().required(),
+        description: Joi.string().required(),
+        items: Joi.array().items(Joi.string()).required(),
       })
     )
-    .required(),
+    .min(1)
+    .required()
+    .messages({
+      'array.base': 'Includes must be an array',
+      'array.min': 'Includes must contain at least one item',
+    }),
   faqs: Joi.array()
     .items(
       Joi.object({
-        title: Joi.string().required(),
-        description: Joi.string().required(),
+        question: Joi.string().required(),
+        answer: Joi.string().required(),
       })
     )
-    .optional(),
+    .optional()
+    .messages({
+      'array.base': 'FAQs must be an array',
+    }),
   serviceId: Joi.string().required(),
 });
 
 // Create a new package
 exports.createPackage = async (req, res, next) => {
   try {
-    console.log('Request body:', req.body);
+    console.log('Raw request body:', req.body);
+    console.log('Type of includes:', typeof req.body.includes);
+    console.log('Includes value:', req.body.includes);
+    console.log('Type of faqs:', typeof req.body.faqs);
+    console.log('FAQs value:', req.body.faqs);
+
+    // Parse includes if it's a string
+    if (typeof req.body.includes === 'string') {
+      try {
+        req.body.includes = JSON.parse(req.body.includes);
+      } catch (parseError) {
+        console.error('Error parsing includes:', parseError);
+        throw new CustomError('Invalid JSON format for includes', 400);
+      }
+    }
+
+    // Parse faqs if it's a string
+    if (typeof req.body.faqs === 'string') {
+      try {
+        req.body.faqs = JSON.parse(req.body.faqs);
+      } catch (parseError) {
+        console.error('Error parsing faqs:', parseError);
+        throw new CustomError('Invalid JSON format for faqs', 400);
+      }
+    }
+
+    // Ensure includes is an array
+    if (!Array.isArray(req.body.includes)) {
+      throw new CustomError('Includes must be an array', 400);
+    }
+
+    // Ensure faqs is an array if it exists
+    if (req.body.faqs && !Array.isArray(req.body.faqs)) {
+      throw new CustomError('FAQs must be an array', 400);
+    }
 
     // Convert price and discount to numbers
     if (typeof req.body.price === 'string') {
@@ -46,6 +89,7 @@ exports.createPackage = async (req, res, next) => {
 
     const { error, value } = packageSchema.validate(req.body);
     if (error) {
+      console.error('Validation error:', error.details);
       throw new CustomError(error.details[0].message, 400);
     }
 
@@ -74,7 +118,7 @@ exports.createPackage = async (req, res, next) => {
 
     res.status(201).json(response(201, true, 'Package created successfully', newPackage));
   } catch (error) {
-    console.log(`Error in createPackage: ${error.message}`);
+    console.error(`Error in createPackage: ${error.message}`);
     next(error);
   }
 };

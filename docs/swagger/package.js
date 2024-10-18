@@ -81,31 +81,35 @@
  *           items:
  *             type: object
  *             properties:
- *               include:
+ *               title:
  *                 type: string
- *               bullets:
+ *               description:
+ *                 type: string
+ *               items:
  *                 type: array
  *                 items:
  *                   type: string
  *           example:
- *             - include: "Feature 1"
- *               bullets: ["Point A", "Point B", "Point C"]
- *             - include: "Feature 2"
- *               bullets: ["Point X", "Point Y", "Point Z"]
+ *             - title: "Feature 1"
+ *               description: "Description of Feature 1"
+ *               items: ["Point A", "Point B", "Point C"]
+ *             - title: "Feature 2"
+ *               description: "Description of Feature 2"
+ *               items: ["Point X", "Point Y", "Point Z"]
  *         faqs:
  *           type: array
  *           items:
  *             type: object
  *             properties:
- *               title:
+ *               question:
  *                 type: string
- *               description:
+ *               answer:
  *                 type: string
  *           example:
- *             - title: "FAQ Question 1"
- *               description: "Answer to FAQ 1"
- *             - title: "FAQ Question 2"
- *               description: "Answer to FAQ 2"
+ *             - question: "FAQ Question 1"
+ *               answer: "Answer to FAQ 1"
+ *             - question: "FAQ Question 2"
+ *               answer: "Answer to FAQ 2"
  *         serviceId:
  *           type: string
  *           description: ID of the associated service

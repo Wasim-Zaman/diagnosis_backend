@@ -14,7 +14,7 @@ const uploadConfig = {
   fileSizeLimit: 5 * 1024 * 1024,
 };
 
-router.post('/v1/package', isAdmin, uploadSingle(uploadConfig), packageController.createPackage);
+router.post('/v1/package', uploadSingle(uploadConfig), packageController.createPackage);
 router.get('/v1/package', packageController.getPackages);
 router.get('/v1/package/:id', packageController.getPackageById);
 router.put('/v1/package/:id', isAdmin, uploadSingle(uploadConfig), packageController.updatePackageById);
