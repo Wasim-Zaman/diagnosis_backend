@@ -31,7 +31,7 @@ This is a Node.js Express API for managing health services, including user manag
 
 - Node.js (v14 or higher recommended)
 - npm (Node Package Manager)
-- PostgreSQL database
+- MySQL database
 
 ## Installation
 
