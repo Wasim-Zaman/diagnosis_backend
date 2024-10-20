@@ -69,7 +69,7 @@ exports.getServiceBookings = async (req, res, next) => {
         OR: [
           { patientName: { contains: query } },
           { mobileNumber: { contains: query } },
-          { status: { contains: query } },
+          { status: query },
         ],
       },
       skip,
@@ -85,7 +85,7 @@ exports.getServiceBookings = async (req, res, next) => {
         OR: [
           { patientName: { contains: query } },
           { mobileNumber: { contains: query } },
-          { status: { contains: query } },
+          { status: query },
         ],
       },
     });
