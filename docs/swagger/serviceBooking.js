@@ -1,86 +1,16 @@
 /**
  * @swagger
- * components:
- *   schemas:
- *     ServiceBooking:
- *       type: object
- *       required:
- *         - patientName
- *         - mobileNumber
- *         - preference
- *         - date
- *         - time
- *         - paymentType
- *         - totalPrice
- *         - serviceId
- *       properties:
- *         id:
- *           type: string
- *           description: The auto-generated id of the service booking
- *         patientName:
- *           type: string
- *           description: The name of the patient
- *         mobileNumber:
- *           type: string
- *           pattern: '^[0-9]{10}$'
- *           description: The mobile number of the patient
- *         preference:
- *           type: string
- *           enum: [LAB_VISIT, HOME_SAMPLE, CLINIC]
- *           description: The preference for the service booking
- *         address:
- *           type: string
- *           description: The address for home sample collection (optional)
- *         date:
- *           type: string
- *           format: date
- *           description: The date of the service booking
- *         time:
- *           type: string
- *           description: The time of the service booking
- *         paymentType:
- *           type: string
- *           enum: [ONLINE, CASH]
- *           description: The payment type for the service booking
- *         totalPrice:
- *           type: number
- *           description: The total price of the service booking
- *         status:
- *           type: string
- *           enum: [COMPLETED, PENDING, CANCELLED]
- *           description: The status of the service booking
- *         serviceId:
- *           type: string
- *           description: The id of the associated service
- *         user:
- *           type: string
- *           description: The id of the user who made the booking
- *         createdAt:
- *           type: string
- *           format: date-time
- *           description: The timestamp of when the booking was created
- *         updatedAt:
- *           type: string
- *           format: date-time
- *           description: The timestamp of when the booking was last updated
- *
- *   responses:
- *     ServiceBookingResponse:
- *       type: object
- *       properties:
- *         status:
- *           type: number
- *         success:
- *           type: boolean
- *         message:
- *           type: string
- *         data:
- *           $ref: '#/components/schemas/ServiceBooking'
- *
- * /api/service-bookings/create-service-booking:
+ * tags:
+ *   name: ServiceBooking
+ *   description: Service booking management
+ */
+
+/**
+ * @swagger
+ * /api/service-booking/create-service-booking:
  *   post:
  *     summary: Create a new service booking
- *     tags: [ServiceBookings]
+ *     tags: [ServiceBooking]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -88,25 +18,70 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ServiceBooking'
+ *             type: object
+ *             required:
+ *               - patientName
+ *               - mobileNumber
+ *               - preference
+ *               - date
+ *               - time
+ *               - paymentType
+ *               - totalPrice
+ *               - serviceId
+ *             properties:
+ *               patientName:
+ *                 type: string
+ *               mobileNumber:
+ *                 type: string
+ *                 pattern: '^[0-9]{10}$'
+ *               preference:
+ *                 type: string
+ *                 enum: [LAB_VISIT, HOME_SAMPLE, CLINIC]
+ *               address:
+ *                 type: string
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               time:
+ *                 type: string
+ *               paymentType:
+ *                 type: string
+ *                 enum: [ONLINE, CASH]
+ *               totalPrice:
+ *                 type: number
+ *               status:
+ *                 type: string
+ *                 enum: [COMPLETED, PENDING, CANCELLED]
+ *                 default: PENDING
+ *               serviceId:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Service booking created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/responses/ServiceBookingResponse'
+ *               $ref: '#/components/schemas/ServiceBookingResponse'
  *       400:
- *         description: Bad request
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
  *         description: Unauthorized
- *       404:
- *         description: User not found
- *
- * /api/service-bookings/get-user-service-bookings:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/service-booking/get-user-service-bookings:
  *   get:
  *     summary: Get user service bookings
- *     tags: [ServiceBookings]
+ *     tags: [ServiceBooking]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -114,11 +89,13 @@
  *         name: page
  *         schema:
  *           type: integer
+ *           default: 1
  *         description: Page number
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
+ *           default: 10
  *         description: Number of items per page
  *     responses:
  *       200:
@@ -126,86 +103,66 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: number
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
- *                 data:
- *                   type: object
- *                   properties:
- *                     data:
- *                       type: array
- *                       items:
- *                         $ref: '#/components/schemas/ServiceBooking'
- *                     totalPages:
- *                       type: number
- *                     currentPage:
- *                       type: number
- *                     totalServiceBookings:
- *                       type: number
+ *               $ref: '#/components/schemas/PaginatedServiceBookingResponse'
  *       401:
  *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
  *         description: No service bookings found for this user
- *
- * /api/service-bookings/get-service-bookings:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/service-booking/get-service-bookings:
  *   get:
  *     summary: Get all service bookings with pagination
- *     tags: [ServiceBookings]
+ *     tags: [ServiceBooking]
  *     parameters:
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
+ *           default: 1
  *         description: Page number
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
+ *           default: 10
  *         description: Number of items per page
  *       - in: query
  *         name: query
  *         schema:
  *           type: string
- *         description: Search query
+ *         description: Search query for patientName, mobileNumber, or status
  *     responses:
  *       200:
  *         description: Service bookings retrieved successfully
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: number
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
- *                 data:
- *                   type: object
- *                   properties:
- *                     data:
- *                       type: array
- *                       items:
- *                         $ref: '#/components/schemas/ServiceBooking'
- *                     totalPages:
- *                       type: number
- *                     currentPage:
- *                       type: number
- *                     totalServiceBookings:
- *                       type: number
+ *               $ref: '#/components/schemas/PaginatedServiceBookingResponse'
  *       404:
  *         description: No service bookings found
- *
- * /api/service-bookings/get-service-booking/{id}:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/service-booking/get-service-booking/{id}:
  *   get:
  *     summary: Get service booking by ID
- *     tags: [ServiceBookings]
+ *     tags: [ServiceBooking]
  *     parameters:
  *       - in: path
  *         name: id
@@ -219,14 +176,21 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/responses/ServiceBookingResponse'
+ *               $ref: '#/components/schemas/ServiceBookingResponse'
  *       404:
  *         description: Service booking not found
- *
- * /api/service-bookings/update-service-booking/{id}:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/service-booking/update-service-booking/{id}:
  *   put:
  *     summary: Update service booking by ID
- *     tags: [ServiceBookings]
+ *     tags: [ServiceBooking]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -241,25 +205,40 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ServiceBooking'
+ *             $ref: '#/components/schemas/ServiceBookingInput'
  *     responses:
  *       200:
  *         description: Service booking updated successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/responses/ServiceBookingResponse'
+ *               $ref: '#/components/schemas/ServiceBookingResponse'
  *       400:
- *         description: Bad request
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
  *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
  *         description: Service booking not found
- *
- * /api/service-bookings/update-service-booking-status/{id}:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/service-booking/update-service-booking-status/{id}:
  *   put:
  *     summary: Update service booking status
- *     tags: [ServiceBookings]
+ *     tags: [ServiceBooking]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -275,6 +254,8 @@
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - status
  *             properties:
  *               status:
  *                 type: string
@@ -285,18 +266,33 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/responses/ServiceBookingResponse'
+ *               $ref: '#/components/schemas/ServiceBookingResponse'
  *       400:
- *         description: Bad request
+ *         description: Invalid status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
  *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
  *         description: Service booking not found
- *
- * /api/service-bookings/delete-service-booking/{id}:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/service-booking/delete-service-booking/{id}:
  *   delete:
  *     summary: Delete service booking by ID
- *     tags: [ServiceBookings]
+ *     tags: [ServiceBooking]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -312,16 +308,178 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: number
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
+ *               $ref: '#/components/schemas/SuccessResponse'
  *       401:
  *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
  *         description: Service booking not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ServiceBookingInput:
+ *       type: object
+ *       required:
+ *         - patientName
+ *         - mobileNumber
+ *         - preference
+ *         - date
+ *         - time
+ *         - paymentType
+ *         - totalPrice
+ *         - serviceId
+ *       properties:
+ *         patientName:
+ *           type: string
+ *         mobileNumber:
+ *           type: string
+ *           pattern: '^[0-9]{10}$'
+ *         preference:
+ *           type: string
+ *           enum: [LAB_VISIT, HOME_SAMPLE, CLINIC]
+ *         address:
+ *           type: string
+ *         date:
+ *           type: string
+ *           format: date
+ *         time:
+ *           type: string
+ *         paymentType:
+ *           type: string
+ *           enum: [ONLINE, CASH]
+ *         totalPrice:
+ *           type: number
+ *         status:
+ *           type: string
+ *           enum: [COMPLETED, PENDING, CANCELLED]
+ *         serviceId:
+ *           type: string
+ *
+ *     ServiceBookingResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: integer
+ *         success:
+ *           type: boolean
+ *         message:
+ *           type: string
+ *         data:
+ *           $ref: '#/components/schemas/ServiceBooking'
+ *
+ *     ServiceBooking:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         patientName:
+ *           type: string
+ *         mobileNumber:
+ *           type: string
+ *         preference:
+ *           type: string
+ *         address:
+ *           type: string
+ *         date:
+ *           type: string
+ *           format: date
+ *         time:
+ *           type: string
+ *         paymentType:
+ *           type: string
+ *         totalPrice:
+ *           type: number
+ *         status:
+ *           type: string
+ *         serviceId:
+ *           type: string
+ *         user:
+ *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *         service:
+ *           $ref: '#/components/schemas/Service'
+ *
+ *     PaginatedServiceBookingResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: integer
+ *         success:
+ *           type: boolean
+ *         message:
+ *           type: string
+ *         data:
+ *           type: object
+ *           properties:
+ *             data:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/ServiceBooking'
+ *             totalPages:
+ *               type: integer
+ *             currentPage:
+ *               type: integer
+ *             totalServiceBookings:
+ *               type: integer
+ *
+ *     Service:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         name:
+ *           type: string
+ *         description:
+ *           type: string
+ *         image:
+ *           type: string
+ *         amount:
+ *           type: number
+ *         discount:
+ *           type: number
+ *         fasting_time:
+ *           type: string
+ *         result_duration:
+ *           type: string
+ *         sample_type:
+ *           type: string
+ *         age_group:
+ *           type: string
+ *         home_sample_collection:
+ *           type: string
+ *
+ *     SuccessResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: integer
+ *         success:
+ *           type: boolean
+ *         message:
+ *           type: string
+ *
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: integer
+ *         success:
+ *           type: boolean
+ *         message:
+ *           type: string
  */
