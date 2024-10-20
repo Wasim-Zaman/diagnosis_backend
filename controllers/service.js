@@ -1,9 +1,9 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const Joi = require('joi');
+const Joi = require("joi");
 
-const CustomError = require('../utils/error');
-const response = require('../utils/response');
+const CustomError = require("../utils/error");
+const response = require("../utils/response");
 
 // Joi validation schema
 const serviceSchema = Joi.object({
@@ -11,7 +11,7 @@ const serviceSchema = Joi.object({
   description: Joi.string().required(),
   image: Joi.string().optional(),
   amount: Joi.number().positive().required(),
-  discount: Joi.number().min(0).max(100).optional(),
+  discount: Joi.number().min(0).max(Joi.ref("amount")).optional(),
   fasting_time: Joi.string().optional(),
   result_duration: Joi.string().optional(),
   sample_type: Joi.string().required(),
@@ -35,7 +35,9 @@ exports.createService = async (req, res, next) => {
       data: value,
     });
 
-    res.status(201).json(response(201, true, 'Service created successfully', newService));
+    res
+      .status(201)
+      .json(response(201, true, "Service created successfully", newService));
   } catch (error) {
     console.log(`Error in createService: ${error.message}`);
     next(error);
@@ -45,7 +47,7 @@ exports.createService = async (req, res, next) => {
 // Get all services with pagination
 exports.getServices = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, query = '' } = req.query;
+    const { page = 1, limit = 10, query = "" } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
     let services;
@@ -54,7 +56,10 @@ exports.getServices = async (req, res, next) => {
     try {
       services = await prisma.service.findMany({
         where: {
-          OR: [{ name: { contains: query } }, { description: { contains: query } }],
+          OR: [
+            { name: { contains: query } },
+            { description: { contains: query } },
+          ],
         },
         skip,
         take: Number(limit),
@@ -62,20 +67,26 @@ exports.getServices = async (req, res, next) => {
 
       totalServices = await prisma.service.count({
         where: {
-          OR: [{ name: { contains: query } }, { description: { contains: query } }],
+          OR: [
+            { name: { contains: query } },
+            { description: { contains: query } },
+          ],
         },
       });
     } catch (dbError) {
-      console.error('Database connection error:', dbError);
-      throw new CustomError('Unable to connect to the database. Please try again later.', 500);
+      console.error("Database connection error:", dbError);
+      throw new CustomError(
+        "Unable to connect to the database. Please try again later.",
+        500
+      );
     }
 
     if (!services.length) {
-      throw new CustomError('No services found', 404);
+      throw new CustomError("No services found", 404);
     }
 
     res.status(200).json(
-      response(200, true, 'Services retrieved successfully', {
+      response(200, true, "Services retrieved successfully", {
         data: services,
         totalPages: Math.ceil(totalServices / Number(limit)),
         currentPage: Number(page),
@@ -95,10 +106,12 @@ exports.getServiceById = async (req, res, next) => {
     const service = await prisma.service.findUnique({ where: { id } });
 
     if (!service) {
-      throw new CustomError('Service not found', 404);
+      throw new CustomError("Service not found", 404);
     }
 
-    res.status(200).json(response(200, true, 'Service found successfully', service));
+    res
+      .status(200)
+      .json(response(200, true, "Service found successfully", service));
   } catch (error) {
     console.log(`Error in getServiceById: ${error.message}`);
     next(error);
@@ -123,7 +136,11 @@ exports.updateServiceById = async (req, res, next) => {
       data: value,
     });
 
-    res.status(200).json(response(200, true, 'Service updated successfully', updatedService));
+    res
+      .status(200)
+      .json(
+        response(200, true, "Service updated successfully", updatedService)
+      );
   } catch (error) {
     console.log(`Error in updateServiceById: ${error.message}`);
     next(error);
@@ -135,7 +152,7 @@ exports.deleteServiceById = async (req, res, next) => {
   try {
     const { id } = req.params;
     await prisma.service.delete({ where: { id } });
-    res.status(200).json(response(200, true, 'Service deleted successfully'));
+    res.status(200).json(response(200, true, "Service deleted successfully"));
   } catch (error) {
     console.log(`Error in deleteServiceById: ${error.message}`);
     next(error);
@@ -150,19 +167,26 @@ exports.getAllServices = async (req, res, next) => {
     try {
       services = await prisma.service.findMany({
         orderBy: {
-          name: 'asc', // You can change this to sort as needed
+          name: "asc", // You can change this to sort as needed
         },
       });
     } catch (dbError) {
-      console.error('Database connection error:', dbError);
-      throw new CustomError('Unable to connect to the database. Please try again later.', 500);
+      console.error("Database connection error:", dbError);
+      throw new CustomError(
+        "Unable to connect to the database. Please try again later.",
+        500
+      );
     }
 
     if (!services.length) {
-      throw new CustomError('No services found', 404);
+      throw new CustomError("No services found", 404);
     }
 
-    res.status(200).json(response(200, true, 'All services retrieved successfully', services));
+    res
+      .status(200)
+      .json(
+        response(200, true, "All services retrieved successfully", services)
+      );
   } catch (error) {
     console.log(`Error in getAllServices: ${error.message}`);
     next(error);
