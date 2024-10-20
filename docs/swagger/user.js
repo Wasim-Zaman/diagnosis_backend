@@ -178,40 +178,23 @@
  *                 data:
  *                   $ref: '#/components/schemas/User'
  *   put:
- *     summary: Update user by ID
+ *     summary: Update user (Admin can update any user, regular user can only update themselves)
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
- *           type: integer
+ *           type: string
+ *         required: false
+ *         description: User ID (required for admin, ignored for regular users)
  *     requestBody:
  *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
- *             type: object
- *             properties:
- *               fullName:
- *                 type: string
- *               mobileNumber:
- *                 type: string
- *                 pattern: '^[0-9]{10}$'
- *               email:
- *                 type: string
- *                 format: email
- *               age:
- *                 type: integer
- *                 minimum: 18
- *               gender:
- *                 type: string
- *                 enum: [MALE, FEMALE, OTHER]
- *               image:
- *                 type: string
- *                 format: binary
+ *             $ref: '#/components/schemas/UserUpdate'
  *     responses:
  *       200:
  *         description: User updated successfully

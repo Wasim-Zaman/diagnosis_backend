@@ -1,13 +1,12 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const crypto = require('crypto');
 
-const Joi = require('joi');
+const Joi = require("joi");
 
-const CustomError = require('../utils/error');
-const response = require('../utils/response');
-const JWT = require('../utils/jwt');
-const Bcrypt = require('../utils/bcrypt');
+const CustomError = require("../utils/error");
+const response = require("../utils/response");
+const JWT = require("../utils/jwt");
+const Bcrypt = require("../utils/bcrypt");
 
 // Joi validation schemas
 const registerSchema = Joi.object({
@@ -16,12 +15,13 @@ const registerSchema = Joi.object({
     .pattern(/^\+[1-9]\d{1,14}$/)
     .required()
     .messages({
-      'string.pattern.base': 'Mobile number must be in international format (e.g., +923005447070)',
+      "string.pattern.base":
+        "Mobile number must be in international format (e.g., +923005447070)",
     }),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
   age: Joi.number().integer().min(18).required(),
-  gender: Joi.string().valid('MALE', 'FEMALE', 'OTHER').required(),
+  gender: Joi.string().valid("MALE", "FEMALE", "OTHER").required(),
   image: Joi.string().optional(),
 });
 
@@ -36,11 +36,12 @@ const updateUserSchema = Joi.object({
     .pattern(/^\+[1-9]\d{1,14}$/)
     .required()
     .messages({
-      'string.pattern.base': 'Mobile number must be in international format (e.g., +923005447070)',
+      "string.pattern.base":
+        "Mobile number must be in international format (e.g., +923005447070)",
     }),
   email: Joi.string().email(),
   age: Joi.number().integer().min(18),
-  gender: Joi.string().valid('MALE', 'FEMALE', 'OTHER'),
+  gender: Joi.string().valid("MALE", "FEMALE", "OTHER"),
   image: Joi.string(),
 }).min(1);
 
@@ -58,12 +59,13 @@ exports.register = async (req, res, next) => {
       throw new CustomError(error.details[0].message, 400);
     }
 
-    const { fullName, mobileNumber, email, password, age, gender, image } = value;
+    const { fullName, mobileNumber, email, password, age, gender, image } =
+      value;
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      throw new CustomError('Email is already registered', 400);
+      throw new CustomError("Email is already registered", 400);
     }
 
     // Hash the password
@@ -86,7 +88,7 @@ exports.register = async (req, res, next) => {
     const token = JWT.createToken(newUser);
 
     res.status(201).json(
-      response(201, true, 'User registered successfully', {
+      response(201, true, "User registered successfully", {
         user: {
           id: newUser.id,
           email: newUser.email,
@@ -114,20 +116,23 @@ exports.login = async (req, res, next) => {
     // Find user by email
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      throw new CustomError('No user found with the entered email', 401);
+      throw new CustomError("No user found with the entered email", 401);
     }
 
     // Compare provided password with stored hashed password
-    const isPasswordValid = await Bcrypt.comparePassword(password, user.password);
+    const isPasswordValid = await Bcrypt.comparePassword(
+      password,
+      user.password
+    );
     if (!isPasswordValid) {
-      throw new CustomError('Invalid password entered', 401);
+      throw new CustomError("Invalid password entered", 401);
     }
 
     // Create a JWT token for the authenticated user
     const token = JWT.createToken(user);
 
     res.status(200).json(
-      response(200, true, 'Login successful', {
+      response(200, true, "Login successful", {
         user: {
           id: user.id,
           email: user.email,
@@ -149,9 +154,9 @@ exports.getUserById = async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({ where: { id: id } });
     if (!user) {
-      throw new CustomError('User not found', 404);
+      throw new CustomError("User not found", 404);
     }
-    res.status(200).json(response(200, true, 'User found successfully', user));
+    res.status(200).json(response(200, true, "User found successfully", user));
   } catch (error) {
     console.log(`Error in getUserById: ${error.message}`);
     next(error);
@@ -163,9 +168,9 @@ exports.getUser = async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
     if (!user) {
-      throw new CustomError('User not found', 404);
+      throw new CustomError("User not found", 404);
     }
-    res.status(200).json(response(200, true, 'User found successfully', user));
+    res.status(200).json(response(200, true, "User found successfully", user));
   } catch (error) {
     console.log(`Error in getUser: ${error.message}`);
     next(error);
@@ -175,7 +180,13 @@ exports.getUser = async (req, res, next) => {
 // Update a user by ID
 exports.updateUserById = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    let id;
+    if (!req.user.id) {
+      id = req.params.id;
+    } else {
+      id = req.user.id;
+    }
+
     const { error, value } = updateUserSchema.validate(req.body);
     if (error) {
       throw new CustomError(error.details[0].message, 400);
@@ -190,7 +201,9 @@ exports.updateUserById = async (req, res, next) => {
       data: value,
     });
 
-    res.status(200).json(response(200, true, 'User updated successfully', updatedUser));
+    res
+      .status(200)
+      .json(response(200, true, "User updated successfully", updatedUser));
   } catch (error) {
     console.log(`Error in updateUserById: ${error.message}`);
     next(error);
@@ -207,14 +220,14 @@ exports.deleteUserById = async (req, res, next) => {
     });
 
     if (!deletedUser) {
-      throw new CustomError('User not found', 404);
+      throw new CustomError("User not found", 404);
     }
 
-    res.status(200).json(response(200, true, 'User deleted successfully'));
+    res.status(200).json(response(200, true, "User deleted successfully"));
   } catch (error) {
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       // Prisma error code for record not found
-      next(new CustomError('User not found', 404));
+      next(new CustomError("User not found", 404));
     } else {
       console.log(`Error in deleteUserById: ${error.message}`);
       next(error);
@@ -225,7 +238,7 @@ exports.deleteUserById = async (req, res, next) => {
 // Get all users with pagination
 exports.getUsers = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, query = '' } = req.query;
+    const { page = 1, limit = 10, query = "" } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
     const users = await prisma.user.findMany({
@@ -243,11 +256,11 @@ exports.getUsers = async (req, res, next) => {
     });
 
     if (!users.length) {
-      throw new CustomError('No users found', 404);
+      throw new CustomError("No users found", 404);
     }
 
     res.status(200).json(
-      response(200, true, 'Users retrieved successfully', {
+      response(200, true, "Users retrieved successfully", {
         data: users,
         totalPages: Math.ceil(totalUsers / Number(limit)),
         currentPage: Number(page),
@@ -272,7 +285,7 @@ exports.resetPassword = async (req, res, next) => {
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      throw new CustomError('No user found with the entered email', 404);
+      throw new CustomError("No user found with the entered email", 404);
     }
 
     const hashedPassword = await Bcrypt.createPassword(newPassword);
@@ -284,7 +297,7 @@ exports.resetPassword = async (req, res, next) => {
       },
     });
 
-    res.status(200).json(response(200, true, 'Password reset successfully'));
+    res.status(200).json(response(200, true, "Password reset successfully"));
   } catch (error) {
     console.log(`Error in resetPassword: ${error.message}`);
     next(error);
