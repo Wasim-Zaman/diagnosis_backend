@@ -8,8 +8,8 @@ const response = require("../utils/response");
 // Joi validation schema
 const serviceBookingSchema = Joi.object({
   patientName: Joi.string().required(),
-  mobileNumber: Joi.string()
-    .pattern(/^[0-9]{10}$/)
+  mobileNumber:
+    Joi.string()
     .required(),
   preference: Joi.string()
     .valid("LAB_VISIT", "HOME_SAMPLE", "CLINIC")
