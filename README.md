@@ -19,7 +19,7 @@ This is a Node.js Express API for managing health services, including user manag
 ## Features
 
 - User authentication and management
-- Admin management
+- Admin authentication
 - Service and package management
 - Service booking system
 - Enquiry handling
@@ -57,8 +57,6 @@ The application uses environment variables for configuration. Make sure to set t
 - `PORT`: The port number on which the server will run (default: 3000)
 - `DATABASE_URL`: Your PostgreSQL database connection string
 - `JWT_SECRET`: Secret key for JWT token generation
-- `ADMIN_EMAIL`: Email for the default admin account
-- `ADMIN_PASSWORD`: Password for the default admin account
 
 ## Usage
 
@@ -86,8 +84,8 @@ http://localhost:3000/api-docs
 
 The API includes the following main route groups:
 
-- `/api/admin`: Admin-related operations
-- `/api/user`: User management
+- `/api/admin`: Admin authentication
+- `/api/user`: User management and authentication
 - `/api/banner`: Banner management
 - `/api/service`: Service management
 - `/api/enquiry`: Enquiry handling
@@ -105,7 +103,8 @@ The application uses a custom error handling middleware. All errors are logged u
 - Helmet.js is used to set various HTTP headers for security
 - Rate limiting is implemented to prevent abuse
 - CORS is enabled and can be configured as needed
-- All routes use appropriate authentication middleware
+- JWT authentication is used for protected routes
+- Input validation is performed using Joi
 
 ## Contributing
 
