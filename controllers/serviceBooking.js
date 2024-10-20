@@ -64,14 +64,20 @@ exports.getServiceBookings = async (req, res, next) => {
     const { page = 1, limit = 10, query = "" } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
+    const whereClause = {
+      OR: [
+        { patientName: { contains: query } },
+        { mobileNumber: { contains: query } },
+      ],
+    };
+
+    // Only add status to the query if it's a valid enum value
+    if (["COMPLETED", "PENDING", "CANCELLED"].includes(query)) {
+      whereClause.OR.push({ status: query });
+    }
+
     const serviceBookings = await prisma.serviceBooking.findMany({
-      where: {
-        OR: [
-          { patientName: { contains: query } },
-          { mobileNumber: { contains: query } },
-          { status: query },
-        ],
-      },
+      where: whereClause,
       skip,
       take: Number(limit),
       orderBy: {
@@ -81,13 +87,7 @@ exports.getServiceBookings = async (req, res, next) => {
     });
 
     const totalServiceBookings = await prisma.serviceBooking.count({
-      where: {
-        OR: [
-          { patientName: { contains: query } },
-          { mobileNumber: { contains: query } },
-          { status: query },
-        ],
-      },
+      where: whereClause,
     });
 
     if (!serviceBookings.length) {
