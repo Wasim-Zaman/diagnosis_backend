@@ -22,6 +22,7 @@
  *           description: The name of the patient
  *         mobileNumber:
  *           type: string
+ *           pattern: '^[0-9]{10}$'
  *           description: The mobile number of the patient
  *         preference:
  *           type: string
