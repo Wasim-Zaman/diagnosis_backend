@@ -90,7 +90,7 @@ model ServiceBooking {
   id              String   @id @default(uuid())
   patientName     String
   mobileNumber    String
-  preference      Preference
+  preference      String
   address         String?
   date            DateTime
   time            String
@@ -104,11 +104,6 @@ model ServiceBooking {
   updatedAt       DateTime @updatedAt
 }
 
-enum Preference {
-  LAB_VISIT
-  HOME_SAMPLE
-  CLINIC
-}
 
 enum PaymentType {
   ONLINE
