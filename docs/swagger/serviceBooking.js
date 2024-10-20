@@ -97,6 +97,12 @@
  *           type: integer
  *           default: 10
  *         description: Number of items per page
+ *       - in: query
+ *         name: tab
+ *         schema:
+ *           type: string
+ *           enum: ['history', 'booked']
+ *         description: Filter bookings by tab (history or booked). If not provided, returns all bookings.
  *     responses:
  *       200:
  *         description: User service bookings retrieved successfully
