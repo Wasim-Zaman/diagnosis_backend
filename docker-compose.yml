@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    env_file:
+      - .env
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  server:
+    build:
+      context: .
+      dockerfile: dockerfiles/server.dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - uploads:/app/uploads
+      - ./:/app
+      - /app/node_modules
+    depends_on:
+      - mysql
+
+  npm:
+    build:
+      context: .
+      dockerfile: dockerfiles/npm.dockerfile
+    volumes:
+      - /app/node_modules
+  pm2:
+    build:
+      context: .
+      dockerfile: dockerfiles/pm2.dockerfile
+    volumes:
+      - /app/node_modules
+
+volumes:
+  uploads:
+  mysql_data:
