@@ -6,3 +6,6 @@
 # Development
 numbers-json.json
 seed.js
+
+
+docker-compose.yml
