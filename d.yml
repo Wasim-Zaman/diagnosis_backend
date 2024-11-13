@@ -1,0 +1,33 @@
+
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: dockerfiles/backend.dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - diagnostics_uploads:/app/uploads
+      - /app/node_modules
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    command: ['start', 'app.js', '--name', 'diagnostics']
+    
+  mysql:
+    image: mysql:8.0
+    env_file:
+      - .env
+    volumes:
+      - diagnostics_mysql:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  diagnostics_uploads:
+    name: diagnostics_uploads
+  diagnostics_mysql:
+    name: diagnostics_mysql
