@@ -6,4 +6,6 @@ COPY . .
 
 RUN npm install
 
-CMD [ "npm", "start" ]
+RUN npm install -g pm2
+
+ENTRYPOINT [ "pm2" ]
